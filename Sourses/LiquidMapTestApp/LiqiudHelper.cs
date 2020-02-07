@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -6,14 +7,16 @@ namespace LiquidMapTestApp
 {
     public class LiqiudHelper
     {
-        public static void HighlightLiquidSyntax(RichTextBox codeRichTextBox, bool useAzureLiquidSyntax)
+        public static void HighlightLiquidSyntax(RichTextBox codeRichTextBox, bool isCSharpNamingConvention)
         {
             // getting keywords/functions
             string keywords = $@"\b({string.Join("|", LiquidSyntax.Keywords)})\b";
             MatchCollection keywordMatches = Regex.Matches(codeRichTextBox.Text, keywords);
 
             // getting filters
-            string filters = $@"\b({string.Join("|", useAzureLiquidSyntax? AzureLiquidSyntax.Filters: LiquidSyntax.Filters)})\b";
+            string filters = $@"\b({string.Join("|", isCSharpNamingConvention 
+                ? LiquidSyntax.Filters.ToList().Select(x => ConvertToCSharpName(x)) 
+                : LiquidSyntax.Filters)})\b";
             MatchCollection filterMatches = Regex.Matches(codeRichTextBox.Text, filters);
 
             // getting types/classes from the text 
@@ -83,5 +86,17 @@ namespace LiquidMapTestApp
             codeRichTextBox.SelectionColor = originalColor;
 
         }
+
+        private static string ConvertToCSharpName(string s)
+        {
+            var parts = s.Split(new char[] {'_'}).Select(x => UpperFirstLetter(x));
+            return string.Join("", parts);
+        }
+
+        private static string UpperFirstLetter(string word)
+        {
+            return char.ToUpperInvariant(word[0]) + word.Substring(1);
+        }
+
     }
 }

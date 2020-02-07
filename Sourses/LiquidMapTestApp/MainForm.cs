@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DotLiquid;
+using DotLiquid.NamingConventions;
 using Newtonsoft.Json;
 
 namespace LiquidMapTestApp
@@ -166,13 +167,8 @@ namespace LiquidMapTestApp
             try
             {
                 var templateText = codeRichTextBox.Text;
-                if (checkBoxUseAzureSyntax.Checked)
-                {
-                    templateText = AzureLiquidHelper.ConvertFromAzureLiquidSyntax(templateText);
-                }
 
-                var template = Template.Parse(templateText);
-                template.MakeThreadSafe();
+                var transformer = new Transformer(templateText, !checkBoxUseAzureSyntax.Checked);
 
                 #region No working
                 //object data = JsonConvert.DeserializeObject(ContentString);
@@ -190,7 +186,7 @@ namespace LiquidMapTestApp
 
                 var json = JsonConvert.DeserializeObject<IDictionary<string, object>>(dataText, new DictionaryConverter());
                 Hash renderData3 = Hash.FromDictionary(json);
-                var result3 = template.Render(renderData3);
+                var result3 = transformer.LiquidTemplate.Render(renderData3);
 
                 DisplayResult(result3);
 
