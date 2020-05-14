@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DotLiquid;
 using DotLiquid.NamingConventions;
+using LiquidMapTestApp.Helpers;
 using Newtonsoft.Json;
 
 namespace LiquidMapTestApp
@@ -20,11 +21,21 @@ namespace LiquidMapTestApp
         private const string FormHeader = "Liquid Map Tester";
         private static string FontName = "Consolas";
         private static int FontSize = 9;
-        private Font EditorDefaultFont = new Font(FontName, FontSize);
+        private readonly Font EditorDefaultFont = new Font(FontName, FontSize);
 
-        private string templateFileName = "";
+        private string templateFileName;
+        private string TemplateFileName
+        {
+            get => this.templateFileName;
+            set
+            {
+                this.templateFileName = value; 
+                this.Text = $"{FormHeader} ({this.templateFileName})";
+            }
+        }
         private String contentValue = "{}";
         private OutputFormat outputFormat = OutputFormat.PlainText;
+
 
         private String ContentString(string rootElement)
         {
@@ -41,7 +52,7 @@ namespace LiquidMapTestApp
             textBoxResult.Font = EditorDefaultFont;
         }
 
-        private void DisplayText(TextBox textBox, string text)
+        private void DisplayText(RichTextBox textBox, string text)
         {
             textBox.Clear();
             textBox.Text = text;
@@ -52,9 +63,17 @@ namespace LiquidMapTestApp
             // load to TextBox
             DisplayText(textBoxData, json);
 
-            // load to TreeView
-            dynamic data = JsonConvert.DeserializeObject(json);
-            ObjectToTreeView.SetObjectAsJson(treeView1, data);
+            try
+            {
+                // load to TreeView
+                dynamic data = JsonConvert.DeserializeObject(json);
+                ObjectToTreeView.SetObjectAsJson(treeView1, data);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DisplayText(textBoxResult, "Input data errors: \n\n" + e.Message);
+            }
         }
 
         private void DisplayTemplate(string text)
@@ -110,8 +129,8 @@ namespace LiquidMapTestApp
             openFileDialog1.Filter = "Liquid map|*.liquid|JSON files|*.json|All files|*.*";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                this.Text = $"{FormHeader} ({openFileDialog1.SafeFileName})";
-                templateFileName = openFileDialog1.FileName;
+                
+                TemplateFileName = openFileDialog1.FileName;
 
                 string fileContent = File.ReadAllText(openFileDialog1.FileName);
 
@@ -124,11 +143,9 @@ namespace LiquidMapTestApp
 
         }
 
-        private void sourseToolStripMenuItem_Click(object sender, EventArgs e)
+        private void viewSourceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //sourseToolStripMenuItem.Checked = !sourseToolStripMenuItem.Checked;
-            //splitContainer1.Panel1.Visible = sourseToolStripMenuItem.Checked;
-            splitContainer1.Panel1Collapsed = !sourseToolStripMenuItem.Checked;
+            splitContainer1.Panel1Collapsed = !viewSourceToolStripMenuItem.Checked;
         }
 
         private void buttonFormatJson_Click(object sender, EventArgs e)
@@ -147,7 +164,7 @@ namespace LiquidMapTestApp
             toolStripButtonExecute.Enabled = executeToolStripMenuItem.Enabled;
 
             saveToolStripMenuItem.Enabled = codeRichTextBox.TextLength > 0;
-            saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled || templateFileName.Length > 0;
+            saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled;
 
             // MANDATORY - focuses a label before highlighting (avoids blinking)
             labelTitle.Focus();
@@ -170,26 +187,24 @@ namespace LiquidMapTestApp
 
                 var transformer = new Transformer(templateText, !checkBoxUseAzureSyntax.Checked);
 
-                #region No working
-                //object data = JsonConvert.DeserializeObject(ContentString);
-                //Hash renderData0 = Hash.FromAnonymousObject((new { content = data }), false);
-                //var result0 = template.Render(renderData0);
+                var rootElement = comboBox2.Text;
 
-                ////var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(ContentString);
-                //var json = JsonConvert.DeserializeObject<IDictionary<string, object>>(ContentString, new DictionaryConverter());
+                var result3 = transformer.RenderFromString(contentValue, rootElement);
 
-                //Hash renderData2 = Hash.FromAnonymousObject((new { content = json }), false);
-                //var result2 = template.Render(renderData2);
-                #endregion
+                if (toolStripButtonShowErrors.Checked && transformer.LiquidTemplate.Errors.Any())
+                {
+                    var message = "";
+                    foreach (var error in transformer.LiquidTemplate.Errors)
+                    {
+                        message += $"Message: {error.Message}\nInnerException: {error.InnerException?.Message}\n\n";
+                    }
 
-                var dataText = ContentString(comboBox2.Text);
-
-                var json = JsonConvert.DeserializeObject<IDictionary<string, object>>(dataText, new DictionaryConverter());
-                Hash renderData3 = Hash.FromDictionary(json);
-                var result3 = transformer.LiquidTemplate.Render(renderData3);
-
-                DisplayResult(result3);
-
+                    DisplayText(textBoxResult, "Transformer errors: \n\n" + message);
+                }
+                else
+                {
+                    DisplayResult(result3);
+                }
             }
             catch (Exception exception)
             {
@@ -245,16 +260,98 @@ namespace LiquidMapTestApp
 
         private void saveToolStripButton_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(templateFileName))
+            if (!string.IsNullOrEmpty(TemplateFileName))
             {
-                saveFileDialog1.FileName = templateFileName;
+                saveFileDialog1.FileName = TemplateFileName;
             }
             saveFileDialog1.OverwritePrompt = true;
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllText(templateFileName, codeRichTextBox.Text);
+                codeRichTextBox.SaveFile(saveFileDialog1.FileName, RichTextBoxStreamType.PlainText);
+                TemplateFileName = saveFileDialog1.FileName;
             }
+        }
+
+        private void buttonSearch_Click(object sender, EventArgs e)
+        {
+            ClearSelection(textBoxData);
+            FindAndSelect(textBoxData, textBoxDataSearch.Text);
+        }
+
+        private void FindAndSelect(RichTextBox textBox, string searchString)
+        {
+            string[] words = searchString.Split(',');
+            foreach (string word in words)
+            {
+                int startindex = 0;
+                while (startindex < textBox.TextLength)
+                {
+                    int wordstartIndex = textBox.Find(word, startindex, RichTextBoxFinds.None);
+                    if (wordstartIndex != -1)
+                    {
+                        textBox.SelectionStart = wordstartIndex;
+                        textBox.SelectionLength = word.Length;
+                        textBox.SelectionBackColor = Color.Yellow;
+                    }
+                    else
+                        break;
+                    startindex += wordstartIndex + word.Length;
+                }
+            }
+
+        }
+
+        private void ClearSelection(RichTextBox textBox)
+        {
+            textBox.SelectionStart = 0;
+            textBox.SelectAll();
+            textBox.SelectionBackColor = Color.White;
+        }
+
+        private void buttonSaveResult_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(textBoxResult.Text))
+                return;
+
+            saveFileDialog2.Title = "Save result as...";
+            saveFileDialog2.Filter = "JSON files|*.json|CSV files|*.csv|All files|*.*";
+
+            saveFileDialog2.OverwritePrompt = true;
+
+            if (saveFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                if (saveFileDialog2.FilterIndex == 2) // CSV format
+                {
+
+                    var csvString = CsvHelper.FromJson(textBoxResult.Text);
+                    if (string.IsNullOrEmpty(csvString))
+                    {
+                        MessageBox.Show("Converting to CSV failed", "Error", MessageBoxButtons.OK);
+                        return;
+                    }
+                    File.WriteAllText(saveFileDialog2.FileName, csvString);
+                }
+                else
+                {
+                    File.WriteAllText(saveFileDialog2.FileName, textBoxResult.Text);
+                }
+            }
+        }
+
+        private void textBoxResult_TextChanged(object sender, EventArgs e)
+        {
+            buttonSaveResult.Enabled = !string.IsNullOrEmpty(textBoxResult.Text);
+        }
+
+        private void viewTemplateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainer2.Panel1Collapsed = !viewTemplateToolStripMenuItem.Checked;
+        }
+
+        private void viewOutputDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainer2.Panel2Collapsed = !viewOutputDataToolStripMenuItem.Checked;
         }
     }
 }

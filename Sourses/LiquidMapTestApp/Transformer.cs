@@ -22,36 +22,38 @@ namespace LiquidMapTestApp
             {
                 DotLiquid.Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
             }
+
             LiquidTemplate = DotLiquid.Template.Parse(template);
             LiquidTemplate.MakeThreadSafe();
-
         }
 
-        //public string RenderFromString(string content, string rootElement = null)
-        //{
-        //    Dictionary<string, object> dicContent;
-        //    JsonSerializerSettings sets = new JsonSerializerSettings
-        //    {
-        //        CheckAdditionalContent = true,
-        //        MaxDepth = null
-        //    };
-        //    var jo = JObject.Parse(content);
-        //    var dic = jo.ToDictionary();
+        public string RenderFromString(string content, string rootElement = null)
+        {
+            Dictionary<string, object> dicContent;
+            JsonSerializerSettings sets = new JsonSerializerSettings
+            {
+                CheckAdditionalContent = true,
+                MaxDepth = null
+            };
 
-        //    if (rootElement is null)
-        //    {
-        //        dicContent = (Dictionary<string, object>)dic;
-        //    }
-        //    else
-        //    {
-        //        dicContent = new Dictionary<string, object>
-        //        {
-        //            { rootElement, dic }
-        //        };
-        //    }
-        //    var obj = DotLiquid.Hash.FromDictionary(dicContent);
-        //    return LiquidTemplate.Render(obj);
-        //}
+            var dic = JsonConvert.DeserializeObject<IDictionary<string, object>>(content, new DictionaryConverter());
+            if (rootElement is null)
+            {
+                dicContent = (Dictionary<string, object>)dic;
+            }
+            else
+            {
+                dicContent = new Dictionary<string, object>
+                {
+                    { rootElement, dic }
+                };
+            }
+
+            DotLiquid.Hash renderData = DotLiquid.Hash.FromDictionary(dicContent);
+            var result = this.LiquidTemplate.Render(renderData);
+
+            return result;
+        }
 
     }
 }
