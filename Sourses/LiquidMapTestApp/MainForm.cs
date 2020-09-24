@@ -42,13 +42,15 @@ namespace LiquidMapTestApp
                 return "{" + rootElement + ":" + contentValue + "}";
         }
 
+        private bool TemplateChanged { get; set; }
+
         public MainForm()
         {
             InitializeComponent();
             this.Text = FormHeader;
 
             textBoxData.Font = EditorDefaultFont;
-            codeRichTextBox.Font = EditorDefaultFont;
+            textBoxTemplate.Font = EditorDefaultFont;
             textBoxResult.Font = EditorDefaultFont;
         }
 
@@ -78,8 +80,8 @@ namespace LiquidMapTestApp
 
         private void DisplayTemplate(string text)
         {
-            codeRichTextBox.Clear();
-            codeRichTextBox.Text = text;
+            textBoxTemplate.Clear();
+            textBoxTemplate.Text = text;
         }
 
         private void DisplayResult(string text)
@@ -132,7 +134,7 @@ namespace LiquidMapTestApp
                 
                 TemplateFileName = openFileDialog1.FileName;
 
-                string fileContent = File.ReadAllText(openFileDialog1.FileName);
+                string fileContent = File.ReadAllText(openFileDialog1.FileName, Encoding.UTF8);
 
                 // load to TextBox
                 DisplayTemplate(fileContent);
@@ -160,18 +162,18 @@ namespace LiquidMapTestApp
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            executeToolStripMenuItem.Enabled = codeRichTextBox.TextLength > 0;
+            executeToolStripMenuItem.Enabled = textBoxTemplate.TextLength > 0;
             toolStripButtonExecute.Enabled = executeToolStripMenuItem.Enabled;
 
-            saveToolStripMenuItem.Enabled = codeRichTextBox.TextLength > 0;
+            saveToolStripMenuItem.Enabled = textBoxTemplate.TextLength > 0;
             saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled;
 
             // MANDATORY - focuses a label before highlighting (avoids blinking)
             labelTitle.Focus();
 
-            LiqiudHelper.HighlightLiquidSyntax(codeRichTextBox, checkBoxUseAzureSyntax.Checked);
+            LiqiudHelper.HighlightLiquidSyntax(textBoxTemplate, checkBoxUseAzureSyntax.Checked);
             // giving back the focus
-            codeRichTextBox.Focus();
+            textBoxTemplate.Focus();
         }
 
         private void textBoxData_TextChanged(object sender, EventArgs e)
@@ -183,7 +185,7 @@ namespace LiquidMapTestApp
         {
             try
             {
-                var templateText = codeRichTextBox.Text;
+                var templateText = textBoxTemplate.Text;
 
                 var transformer = new Transformer(templateText, !checkBoxUseAzureSyntax.Checked);
 
@@ -268,15 +270,24 @@ namespace LiquidMapTestApp
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                codeRichTextBox.SaveFile(saveFileDialog1.FileName, RichTextBoxStreamType.PlainText);
+                textBoxTemplate.SaveFile(saveFileDialog1.FileName, RichTextBoxStreamType.PlainText);
                 TemplateFileName = saveFileDialog1.FileName;
+                tabPage5.Text = "Template";
             }
         }
 
         private void buttonSearch_Click(object sender, EventArgs e)
         {
-            ClearSelection(textBoxData);
-            FindAndSelect(textBoxData, textBoxDataSearch.Text);
+            var text = textBoxDataSearch.Text;
+            SearchText(textBoxData, text);
+            SearchText(textBoxTemplate, text);
+            SearchText(textBoxResult, text);
+        }
+
+        private void SearchText(RichTextBox textBox, string text)
+        {
+            ClearSelection(textBox);
+            FindAndSelect(textBox, text);
         }
 
         private void FindAndSelect(RichTextBox textBox, string searchString)
@@ -353,5 +364,12 @@ namespace LiquidMapTestApp
         {
             splitContainer2.Panel2Collapsed = !viewOutputDataToolStripMenuItem.Checked;
         }
+
+        private void textBoxTemplate_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            TemplateChanged = true;
+            tabPage5.Text = "Template *";
+        }
+
     }
 }

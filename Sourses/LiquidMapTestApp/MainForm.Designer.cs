@@ -71,7 +71,7 @@
             this.tabControlTemplate = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.panelTemplate = new System.Windows.Forms.Panel();
-            this.codeRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.textBoxTemplate = new System.Windows.Forms.RichTextBox();
             this.panelTemplateTools = new System.Windows.Forms.Panel();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.labelRootElement = new System.Windows.Forms.Label();
@@ -209,7 +209,7 @@
             this.viewSourceToolStripMenuItem.CheckOnClick = true;
             this.viewSourceToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.viewSourceToolStripMenuItem.Name = "viewSourceToolStripMenuItem";
-            this.viewSourceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewSourceToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.viewSourceToolStripMenuItem.Text = "Input Data";
             this.viewSourceToolStripMenuItem.Click += new System.EventHandler(this.viewSourceToolStripMenuItem_Click);
             // 
@@ -220,7 +220,7 @@
             this.viewTemplateToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.viewTemplateToolStripMenuItem.Enabled = false;
             this.viewTemplateToolStripMenuItem.Name = "viewTemplateToolStripMenuItem";
-            this.viewTemplateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewTemplateToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.viewTemplateToolStripMenuItem.Text = "Template";
             this.viewTemplateToolStripMenuItem.Click += new System.EventHandler(this.viewTemplateToolStripMenuItem_Click);
             // 
@@ -230,7 +230,7 @@
             this.viewOutputDataToolStripMenuItem.CheckOnClick = true;
             this.viewOutputDataToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.viewOutputDataToolStripMenuItem.Name = "viewOutputDataToolStripMenuItem";
-            this.viewOutputDataToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewOutputDataToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.viewOutputDataToolStripMenuItem.Text = "Output data";
             this.viewOutputDataToolStripMenuItem.Click += new System.EventHandler(this.viewOutputDataToolStripMenuItem_Click);
             // 
@@ -521,23 +521,24 @@
             // panelTemplate
             // 
             this.panelTemplate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelTemplate.Controls.Add(this.codeRichTextBox);
+            this.panelTemplate.Controls.Add(this.textBoxTemplate);
             this.panelTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelTemplate.Location = new System.Drawing.Point(3, 3);
             this.panelTemplate.Name = "panelTemplate";
             this.panelTemplate.Size = new System.Drawing.Size(310, 398);
             this.panelTemplate.TabIndex = 2;
             // 
-            // codeRichTextBox
+            // textBoxTemplate
             // 
-            this.codeRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.codeRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.codeRichTextBox.Location = new System.Drawing.Point(0, 0);
-            this.codeRichTextBox.Name = "codeRichTextBox";
-            this.codeRichTextBox.Size = new System.Drawing.Size(308, 396);
-            this.codeRichTextBox.TabIndex = 0;
-            this.codeRichTextBox.Text = "";
-            this.codeRichTextBox.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            this.textBoxTemplate.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxTemplate.Location = new System.Drawing.Point(0, 0);
+            this.textBoxTemplate.Name = "textBoxTemplate";
+            this.textBoxTemplate.Size = new System.Drawing.Size(308, 396);
+            this.textBoxTemplate.TabIndex = 0;
+            this.textBoxTemplate.Text = "";
+            this.textBoxTemplate.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            this.textBoxTemplate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxTemplate_KeyPress);
             // 
             // panelTemplateTools
             // 
@@ -841,7 +842,7 @@
         private System.Windows.Forms.CheckBox chbxRemoveEmptyString;
         private System.Windows.Forms.Button buttonFormatJsonResult;
         private System.Windows.Forms.CheckBox checkBoxUseAzureSyntax;
-        private System.Windows.Forms.RichTextBox codeRichTextBox;
+        private System.Windows.Forms.RichTextBox textBoxTemplate;
         private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.CheckBox checkBoxAutoFormatJsonResult;
         private System.Windows.Forms.ToolStrip toolStrip1;
