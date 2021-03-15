@@ -18,7 +18,7 @@ namespace LiquidMapTestApp
 {
     public partial class MainForm : Form
     {
-        private const string FormHeader = "Liquid Map Tester";
+        private const string FormHeader = "Liquid Template Tester";
         private static string FontName = "Consolas";
         private static int FontSize = 9;
         private readonly Font EditorDefaultFont = new Font(FontName, FontSize);
@@ -377,5 +377,10 @@ namespace LiquidMapTestApp
             tabPage5.Text = "Template *";
         }
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new AboutBox();
+            form.ShowDialog();
+        }
     }
 }

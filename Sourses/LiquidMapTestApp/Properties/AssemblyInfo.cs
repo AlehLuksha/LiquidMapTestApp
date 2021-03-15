@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LiquidMapTestApp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Liquid Template Tester")]
+[assembly: AssemblyDescription("The tool to quick test the liquid template")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("EPAM Systems")]
-[assembly: AssemblyProduct("LiquidMapTestApp")]
-[assembly: AssemblyCopyright("Copyright © EPAM Systems 2019")]
+[assembly: AssemblyCompany("Aleh Luksha & Co :)")]
+[assembly: AssemblyProduct("Liquid Template Tester")]
+[assembly: AssemblyCopyright("Copyright © Aleh Luksha 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
