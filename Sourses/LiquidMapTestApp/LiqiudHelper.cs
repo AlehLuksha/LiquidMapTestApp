@@ -7,6 +7,15 @@ namespace LiquidMapTestApp
 {
     public class LiqiudHelper
     {
+        private static Font _keywordFont;
+        private static Font _commentsFont;
+
+        public static void Init(RichTextBox codeRichTextBox)
+        {
+            _keywordFont = new Font(codeRichTextBox.Font.Name, codeRichTextBox.Font.Size, FontStyle.Bold);
+            _commentsFont = new Font(codeRichTextBox.Font.Name, codeRichTextBox.Font.Size, FontStyle.Italic);
+        }
+
         public static void HighlightLiquidSyntax(RichTextBox codeRichTextBox, bool isCSharpNamingConvention)
         {
             // getting keywords/functions
@@ -23,12 +32,13 @@ namespace LiquidMapTestApp
             string types = @"\b(Console)\b";
             MatchCollection typeMatches = Regex.Matches(codeRichTextBox.Text, types);
 
-            // getting comments (inline or multiline)
-            string comments = @"(\/\/.+?$|\/\*.+?\*\/)";
+            // getting comments (multiline)
+            //string comments = @"(\/\/.+?$|\/\*.+?\*\/)";
+            string comments = @"{% comment %}(.|[\r\n])*?{% endcomment %}";
             MatchCollection commentMatches = Regex.Matches(codeRichTextBox.Text, comments, RegexOptions.Multiline);
 
             // getting strings
-            string strings = "\".+?\"";
+            string strings = "(\".+?\"|'.+?')";
             MatchCollection stringMatches = Regex.Matches(codeRichTextBox.Text, strings);
 
             // saving the original caret position + forecolor
@@ -41,14 +51,13 @@ namespace LiquidMapTestApp
             codeRichTextBox.SelectionLength = codeRichTextBox.Text.Length;
             codeRichTextBox.SelectionColor = originalColor;
 
-            var keywordFont = new Font( codeRichTextBox.Font.Name, codeRichTextBox.Font.Size, FontStyle.Bold);
             // scanning...
             foreach (Match m in keywordMatches)
             {
                 codeRichTextBox.SelectionStart = m.Index;
                 codeRichTextBox.SelectionLength = m.Length;
                 codeRichTextBox.SelectionColor = Color.DarkBlue;
-                codeRichTextBox.SelectionFont = keywordFont;
+                codeRichTextBox.SelectionFont = _keywordFont;
             }
 
             foreach (Match m in typeMatches)
@@ -63,6 +72,7 @@ namespace LiquidMapTestApp
                 codeRichTextBox.SelectionStart = m.Index;
                 codeRichTextBox.SelectionLength = m.Length;
                 codeRichTextBox.SelectionColor = Color.Green;
+                codeRichTextBox.SelectionFont = _commentsFont;
             }
 
             foreach (Match m in stringMatches)
@@ -77,7 +87,7 @@ namespace LiquidMapTestApp
                 codeRichTextBox.SelectionStart = m.Index;
                 codeRichTextBox.SelectionLength = m.Length;
                 codeRichTextBox.SelectionColor = Color.Blue;
-                codeRichTextBox.SelectionFont = keywordFont;
+                codeRichTextBox.SelectionFont = _keywordFont;
             }
 
             // restoring the original colors, for further writing

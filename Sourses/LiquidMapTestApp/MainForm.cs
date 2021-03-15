@@ -52,6 +52,8 @@ namespace LiquidMapTestApp
             textBoxData.Font = EditorDefaultFont;
             textBoxTemplate.Font = EditorDefaultFont;
             textBoxResult.Font = EditorDefaultFont;
+
+            LiqiudHelper.Init(textBoxTemplate);
         }
 
         private void DisplayText(RichTextBox textBox, string text)
@@ -141,6 +143,10 @@ namespace LiquidMapTestApp
 
                 executeToolStripMenuItem.Enabled = fileContent.Length > 0;
                 toolStripButtonExecute.Enabled = executeToolStripMenuItem.Enabled;
+
+                saveToolStripMenuItem.Enabled = false;
+                saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled;
+
             }
 
         }

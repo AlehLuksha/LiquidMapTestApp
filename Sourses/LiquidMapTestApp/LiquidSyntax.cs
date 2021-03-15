@@ -15,8 +15,9 @@ namespace LiquidMapTestApp
             "case", "when", "endcase",
             "comment", "endcomment",
             "unless", "endunless",
-            "for","break", "continue", "endfor",
-            "cycle", "tablerow", "endtablerow", "raw", "endraw"
+            "for", "break", "continue", "endfor",
+            "cycle", "tablerow", "endtablerow", "raw", "endraw",
+            "blank", "null", "and", "or", "true", "false"
         };
 
         public static string[] Filters = new[]
