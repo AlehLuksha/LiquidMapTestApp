@@ -7,8 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiquidMapTestApp", "LiquidM
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{0A258D28-989B-4679-B4F5-299F4C71AFE5}"
 	ProjectSection(SolutionItems) = preProject
-		LiquidMapTestApp\json1.json = LiquidMapTestApp\json1.json
-		LiquidMapTestApp\map.liquid = LiquidMapTestApp\map.liquid
+		Samples\TestData\json1.json = Samples\TestData\json1.json
+		Samples\TestData\JsonArray1.json = Samples\TestData\JsonArray1.json
+		Samples\TestData\transformJson1.liquid = Samples\TestData\transformJson1.liquid
+		Samples\TestData\transformJsonArray1.liquid = Samples\TestData\transformJsonArray1.liquid
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransformFunctionApp", "Samples\TransformFunctionApp\TransformFunctionApp.csproj", "{B153C405-FC85-467A-B5BC-5B6D458BBA50}"
