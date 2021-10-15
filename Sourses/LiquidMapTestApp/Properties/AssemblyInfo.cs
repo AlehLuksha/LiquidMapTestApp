@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Aleh Luksha & Co :)")]
 [assembly: AssemblyProduct("Liquid Template Tester")]
-[assembly: AssemblyCopyright("Copyright © Aleh Luksha 2019")]
+[assembly: AssemblyCopyright("Copyright © Aleh Luksha 2019-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

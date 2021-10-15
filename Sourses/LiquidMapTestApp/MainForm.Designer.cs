@@ -45,6 +45,8 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tabControlData = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -78,12 +80,14 @@
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.refreshToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonExecute = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonExecute = new System.Windows.Forms.ToolStripSplitButton();
+            this.loadTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonShowErrors = new System.Windows.Forms.ToolStripButton();
             this.labelTitle = new System.Windows.Forms.Label();
-            this.checkBoxUseAzureSyntax = new System.Windows.Forms.CheckBox();
+            this.checkBoxCSharpNaming = new System.Windows.Forms.CheckBox();
             this.panelResultOptions = new System.Windows.Forms.Panel();
             this.buttonSaveResult = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -94,8 +98,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.tabControlData.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -123,6 +127,7 @@
             this.toolStrip2.SuspendLayout();
             this.panelResultOptions.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -155,6 +160,7 @@
             // 
             // newToolStripMenuItem
             // 
+            this.newToolStripMenuItem.Enabled = false;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.newToolStripMenuItem.Text = "New template";
@@ -260,6 +266,21 @@
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(131, 6);
             // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
             // tabControlData
             // 
             this.tabControlData.Controls.Add(this.tabPage1);
@@ -268,7 +289,7 @@
             this.tabControlData.Location = new System.Drawing.Point(0, 54);
             this.tabControlData.Name = "tabControlData";
             this.tabControlData.SelectedIndex = 0;
-            this.tabControlData.Size = new System.Drawing.Size(288, 430);
+            this.tabControlData.Size = new System.Drawing.Size(288, 408);
             this.tabControlData.TabIndex = 2;
             // 
             // tabPage1
@@ -277,7 +298,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(280, 404);
+            this.tabPage1.Size = new System.Drawing.Size(280, 382);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Input data";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -289,7 +310,7 @@
             this.panelData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelData.Location = new System.Drawing.Point(3, 3);
             this.panelData.Name = "panelData";
-            this.panelData.Size = new System.Drawing.Size(274, 398);
+            this.panelData.Size = new System.Drawing.Size(274, 376);
             this.panelData.TabIndex = 3;
             // 
             // textBoxData
@@ -298,7 +319,7 @@
             this.textBoxData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxData.Location = new System.Drawing.Point(0, 0);
             this.textBoxData.Name = "textBoxData";
-            this.textBoxData.Size = new System.Drawing.Size(272, 396);
+            this.textBoxData.Size = new System.Drawing.Size(272, 374);
             this.textBoxData.TabIndex = 2;
             this.textBoxData.Text = "";
             this.textBoxData.TextChanged += new System.EventHandler(this.textBoxData_TextChanged);
@@ -309,7 +330,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(280, 404);
+            this.tabPage2.Size = new System.Drawing.Size(280, 382);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Tree";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -319,7 +340,7 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(3, 3);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(274, 398);
+            this.treeView1.Size = new System.Drawing.Size(274, 376);
             this.treeView1.TabIndex = 1;
             // 
             // tabControlResult
@@ -331,7 +352,7 @@
             this.tabControlResult.Location = new System.Drawing.Point(0, 54);
             this.tabControlResult.Name = "tabControlResult";
             this.tabControlResult.SelectedIndex = 0;
-            this.tabControlResult.Size = new System.Drawing.Size(291, 430);
+            this.tabControlResult.Size = new System.Drawing.Size(291, 408);
             this.tabControlResult.TabIndex = 3;
             // 
             // tabPage3
@@ -340,7 +361,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(283, 404);
+            this.tabPage3.Size = new System.Drawing.Size(283, 382);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "Result";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -352,7 +373,7 @@
             this.panelResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelResult.Location = new System.Drawing.Point(3, 3);
             this.panelResult.Name = "panelResult";
-            this.panelResult.Size = new System.Drawing.Size(277, 398);
+            this.panelResult.Size = new System.Drawing.Size(277, 376);
             this.panelResult.TabIndex = 3;
             // 
             // textBoxResult
@@ -361,7 +382,7 @@
             this.textBoxResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxResult.Location = new System.Drawing.Point(0, 0);
             this.textBoxResult.Name = "textBoxResult";
-            this.textBoxResult.Size = new System.Drawing.Size(275, 396);
+            this.textBoxResult.Size = new System.Drawing.Size(275, 374);
             this.textBoxResult.TabIndex = 2;
             this.textBoxResult.Text = "";
             this.textBoxResult.TextChanged += new System.EventHandler(this.textBoxResult_TextChanged);
@@ -372,7 +393,7 @@
             this.tabPageResultJson.Location = new System.Drawing.Point(4, 22);
             this.tabPageResultJson.Name = "tabPageResultJson";
             this.tabPageResultJson.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageResultJson.Size = new System.Drawing.Size(283, 404);
+            this.tabPageResultJson.Size = new System.Drawing.Size(283, 382);
             this.tabPageResultJson.TabIndex = 1;
             this.tabPageResultJson.Text = "Tree";
             this.tabPageResultJson.UseVisualStyleBackColor = true;
@@ -382,7 +403,7 @@
             this.treeView2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView2.Location = new System.Drawing.Point(3, 3);
             this.treeView2.Name = "treeView2";
-            this.treeView2.Size = new System.Drawing.Size(277, 398);
+            this.treeView2.Size = new System.Drawing.Size(277, 376);
             this.treeView2.TabIndex = 1;
             // 
             // tabPageResultHTML
@@ -392,7 +413,7 @@
             this.tabPageResultHTML.Margin = new System.Windows.Forms.Padding(2);
             this.tabPageResultHTML.Name = "tabPageResultHTML";
             this.tabPageResultHTML.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPageResultHTML.Size = new System.Drawing.Size(283, 404);
+            this.tabPageResultHTML.Size = new System.Drawing.Size(283, 382);
             this.tabPageResultHTML.TabIndex = 2;
             this.tabPageResultHTML.Text = "HTML";
             this.tabPageResultHTML.UseVisualStyleBackColor = true;
@@ -403,7 +424,7 @@
             this.webBrowser1.Location = new System.Drawing.Point(2, 2);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(279, 400);
+            this.webBrowser1.Size = new System.Drawing.Size(279, 378);
             this.webBrowser1.TabIndex = 0;
             // 
             // splitContainer1
@@ -420,7 +441,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(907, 484);
+            this.splitContainer1.Size = new System.Drawing.Size(907, 462);
             this.splitContainer1.SplitterDistance = 288;
             this.splitContainer1.SplitterWidth = 2;
             this.splitContainer1.TabIndex = 1;
@@ -495,7 +516,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.tabControlResult);
             this.splitContainer2.Panel2.Controls.Add(this.panelResultOptions);
-            this.splitContainer2.Size = new System.Drawing.Size(617, 484);
+            this.splitContainer2.Size = new System.Drawing.Size(617, 462);
             this.splitContainer2.SplitterDistance = 324;
             this.splitContainer2.SplitterWidth = 2;
             this.splitContainer2.TabIndex = 0;
@@ -507,7 +528,7 @@
             this.tabControlTemplate.Location = new System.Drawing.Point(0, 54);
             this.tabControlTemplate.Name = "tabControlTemplate";
             this.tabControlTemplate.SelectedIndex = 0;
-            this.tabControlTemplate.Size = new System.Drawing.Size(324, 430);
+            this.tabControlTemplate.Size = new System.Drawing.Size(324, 408);
             this.tabControlTemplate.TabIndex = 1;
             // 
             // tabPage5
@@ -516,7 +537,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(316, 404);
+            this.tabPage5.Size = new System.Drawing.Size(316, 382);
             this.tabPage5.TabIndex = 0;
             this.tabPage5.Text = "Template";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -528,7 +549,7 @@
             this.panelTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelTemplate.Location = new System.Drawing.Point(3, 3);
             this.panelTemplate.Name = "panelTemplate";
-            this.panelTemplate.Size = new System.Drawing.Size(310, 398);
+            this.panelTemplate.Size = new System.Drawing.Size(310, 376);
             this.panelTemplate.TabIndex = 2;
             // 
             // textBoxTemplate
@@ -537,7 +558,7 @@
             this.textBoxTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxTemplate.Location = new System.Drawing.Point(0, 0);
             this.textBoxTemplate.Name = "textBoxTemplate";
-            this.textBoxTemplate.Size = new System.Drawing.Size(308, 396);
+            this.textBoxTemplate.Size = new System.Drawing.Size(308, 374);
             this.textBoxTemplate.TabIndex = 0;
             this.textBoxTemplate.Text = "";
             this.textBoxTemplate.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
@@ -549,7 +570,7 @@
             this.panelTemplateTools.Controls.Add(this.labelRootElement);
             this.panelTemplateTools.Controls.Add(this.toolStrip2);
             this.panelTemplateTools.Controls.Add(this.labelTitle);
-            this.panelTemplateTools.Controls.Add(this.checkBoxUseAzureSyntax);
+            this.panelTemplateTools.Controls.Add(this.checkBoxCSharpNaming);
             this.panelTemplateTools.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTemplateTools.Location = new System.Drawing.Point(0, 0);
             this.panelTemplateTools.Name = "panelTemplateTools";
@@ -584,6 +605,7 @@
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripButton,
             this.saveToolStripButton,
+            this.refreshToolStripButton,
             this.toolStripSeparator1,
             this.toolStripButtonExecute,
             this.toolStripSeparator2,
@@ -615,6 +637,16 @@
             this.saveToolStripButton.Text = "&Save";
             this.saveToolStripButton.Click += new System.EventHandler(this.saveToolStripButton_Click);
             // 
+            // refreshToolStripButton
+            // 
+            this.refreshToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.refreshToolStripButton.Enabled = false;
+            this.refreshToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshToolStripButton.Image")));
+            this.refreshToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.refreshToolStripButton.Name = "refreshToolStripButton";
+            this.refreshToolStripButton.Size = new System.Drawing.Size(24, 24);
+            this.refreshToolStripButton.Click += new System.EventHandler(this.refreshToolStripButton_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -623,15 +655,24 @@
             // toolStripButtonExecute
             // 
             this.toolStripButtonExecute.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonExecute.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadTestToolStripMenuItem});
             this.toolStripButtonExecute.Enabled = false;
             this.toolStripButtonExecute.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.toolStripButtonExecute.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonExecute.Image")));
             this.toolStripButtonExecute.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonExecute.Name = "toolStripButtonExecute";
-            this.toolStripButtonExecute.Size = new System.Drawing.Size(56, 24);
+            this.toolStripButtonExecute.Size = new System.Drawing.Size(68, 24);
             this.toolStripButtonExecute.Text = "Execute";
             this.toolStripButtonExecute.ToolTipText = "Execute   F5";
             this.toolStripButtonExecute.Click += new System.EventHandler(this.executeToolStripMenuItem_Click);
+            // 
+            // loadTestToolStripMenuItem
+            // 
+            this.loadTestToolStripMenuItem.Name = "loadTestToolStripMenuItem";
+            this.loadTestToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.loadTestToolStripMenuItem.Text = "Load test";
+            this.loadTestToolStripMenuItem.Click += new System.EventHandler(this.loadTestToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -657,16 +698,16 @@
             this.labelTitle.Size = new System.Drawing.Size(0, 13);
             this.labelTitle.TabIndex = 1;
             // 
-            // checkBoxUseAzureSyntax
+            // checkBoxCSharpNaming
             // 
-            this.checkBoxUseAzureSyntax.AutoSize = true;
-            this.checkBoxUseAzureSyntax.Location = new System.Drawing.Point(8, 28);
-            this.checkBoxUseAzureSyntax.Name = "checkBoxUseAzureSyntax";
-            this.checkBoxUseAzureSyntax.Size = new System.Drawing.Size(109, 17);
-            this.checkBoxUseAzureSyntax.TabIndex = 0;
-            this.checkBoxUseAzureSyntax.Text = "Logic App Syntax";
-            this.checkBoxUseAzureSyntax.UseVisualStyleBackColor = true;
-            this.checkBoxUseAzureSyntax.CheckedChanged += new System.EventHandler(this.checkBoxUseAzureSyntax_CheckedChanged);
+            this.checkBoxCSharpNaming.AutoSize = true;
+            this.checkBoxCSharpNaming.Location = new System.Drawing.Point(8, 28);
+            this.checkBoxCSharpNaming.Name = "checkBoxCSharpNaming";
+            this.checkBoxCSharpNaming.Size = new System.Drawing.Size(79, 17);
+            this.checkBoxCSharpNaming.TabIndex = 0;
+            this.checkBoxCSharpNaming.Text = "C# Naming";
+            this.checkBoxCSharpNaming.UseVisualStyleBackColor = true;
+            this.checkBoxCSharpNaming.CheckedChanged += new System.EventHandler(this.checkBoxCSharpNaming_CheckedChanged);
             // 
             // panelResultOptions
             // 
@@ -756,23 +797,23 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 24);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(907, 484);
+            this.panel1.Size = new System.Drawing.Size(907, 462);
             this.panel1.TabIndex = 1;
             // 
-            // helpToolStripMenuItem
+            // statusStrip1
             // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 486);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(907, 22);
+            this.statusStrip1.TabIndex = 2;
+            this.statusStrip1.Text = "statusStrip1";
             // 
-            // aboutToolStripMenuItem
+            // toolStripStatusLabel1
             // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
             // MainForm
             // 
@@ -780,6 +821,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(907, 508);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
@@ -818,6 +860,8 @@
             this.panelResultOptions.ResumeLayout(false);
             this.panelResultOptions.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -859,7 +903,7 @@
         private System.Windows.Forms.Panel panelResultOptions;
         private System.Windows.Forms.CheckBox chbxRemoveEmptyString;
         private System.Windows.Forms.Button buttonFormatJsonResult;
-        private System.Windows.Forms.CheckBox checkBoxUseAzureSyntax;
+        private System.Windows.Forms.CheckBox checkBoxCSharpNaming;
         private System.Windows.Forms.RichTextBox textBoxTemplate;
         private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.CheckBox checkBoxAutoFormatJsonResult;
@@ -871,7 +915,6 @@
         private System.Windows.Forms.ToolStripButton openToolStripButton;
         private System.Windows.Forms.ToolStripButton saveToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton toolStripButtonExecute;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Label labelRootElement;
@@ -892,6 +935,11 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog2;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripSplitButton toolStripButtonExecute;
+        private System.Windows.Forms.ToolStripMenuItem loadTestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton refreshToolStripButton;
     }
 }
 

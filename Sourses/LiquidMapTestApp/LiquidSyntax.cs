@@ -35,6 +35,8 @@ namespace LiquidMapTestApp
             "date", "default", "default_errors", "default_pagination", "format_address", "highlight", "highlight_active_tag", "json", "weight_with_unit", "placeholder_svg_tag",
             // Color, Font, Html filters
 
+            // my custom filters
+            "format"
         };
 
     }

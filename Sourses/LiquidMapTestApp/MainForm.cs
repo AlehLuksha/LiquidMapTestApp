@@ -96,7 +96,11 @@ namespace LiquidMapTestApp
 
             if (outputFormat == OutputFormat.Json && checkBoxAutoFormatJsonResult.Checked)
             {
-                text = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(text), Formatting.Indented);
+                // format to JSON
+                dynamic outputData = JsonConvert.DeserializeObject(text
+                    , new JsonSerializerSettings(){FloatParseHandling = FloatParseHandling.Decimal}
+                    );
+                text = JsonConvert.SerializeObject(outputData, Formatting.Indented);
             }
 
             DisplayText(textBoxResult, text);
@@ -133,22 +137,28 @@ namespace LiquidMapTestApp
             openFileDialog1.Filter = "Liquid map|*.liquid|JSON files|*.json|All files|*.*";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                
                 TemplateFileName = openFileDialog1.FileName;
 
-                string fileContent = File.ReadAllText(openFileDialog1.FileName, Encoding.UTF8);
-
-                // load to TextBox
-                DisplayTemplate(fileContent);
-
-                executeToolStripMenuItem.Enabled = fileContent.Length > 0;
-                toolStripButtonExecute.Enabled = executeToolStripMenuItem.Enabled;
-
-                saveToolStripMenuItem.Enabled = false;
-                saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled;
+                RefreshTemplate();
 
             }
 
+            refreshToolStripButton.Enabled = !string.IsNullOrEmpty(TemplateFileName);
+
+        }
+
+        private void RefreshTemplate()
+        {
+            string fileContent = File.ReadAllText(TemplateFileName, Encoding.UTF8);
+
+            // load to TextBox
+            DisplayTemplate(fileContent);
+
+            executeToolStripMenuItem.Enabled = fileContent.Length > 0;
+            toolStripButtonExecute.Enabled = executeToolStripMenuItem.Enabled;
+
+            saveToolStripMenuItem.Enabled = false;
+            saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled;
         }
 
         private void viewSourceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -177,7 +187,7 @@ namespace LiquidMapTestApp
             // MANDATORY - focuses a label before highlighting (avoids blinking)
             labelTitle.Focus();
 
-            LiqiudHelper.HighlightLiquidSyntax(textBoxTemplate, checkBoxUseAzureSyntax.Checked);
+            LiqiudHelper.HighlightLiquidSyntax(textBoxTemplate, checkBoxCSharpNaming.Checked);
             // giving back the focus
             textBoxTemplate.Focus();
         }
@@ -193,11 +203,18 @@ namespace LiquidMapTestApp
             {
                 var templateText = textBoxTemplate.Text;
 
-                var transformer = new Transformer(templateText, !checkBoxUseAzureSyntax.Checked);
-
                 var rootElement = comboBox2.Text;
 
+                var t1 = DateTime.Now;
+
+                var transformer = new Transformer(templateText, !checkBoxCSharpNaming.Checked);
+
                 var result3 = transformer.RenderFromString(contentValue, rootElement);
+
+                var t2 = DateTime.Now;
+
+                var delta = (t2 - t1).TotalMilliseconds;
+                toolStripStatusLabel1.Text = $"Estimated time for 10000 iterations: {Math.Round(delta/1000*10000, 5)} secs";
 
                 if (toolStripButtonShowErrors.Checked && transformer.LiquidTemplate.Errors.Any())
                 {
@@ -224,7 +241,7 @@ namespace LiquidMapTestApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            checkBoxUseAzureSyntax.Checked = true;
+            checkBoxCSharpNaming.Checked = true;
             tabControlResult.TabPages.Remove(tabPageResultJson);
             tabControlResult.TabPages.Remove(tabPageResultHTML);
             comboBox1.SelectedIndex = (int)OutputFormat.Json;
@@ -257,13 +274,13 @@ namespace LiquidMapTestApp
             webBrowser1.DocumentText = "";
         }
 
-        private void checkBoxUseAzureSyntax_CheckedChanged(object sender, EventArgs e)
+        private void checkBoxCSharpNaming_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxUseAzureSyntax.Checked)
+            if (checkBoxCSharpNaming.Checked)
             {
                 comboBox2.SelectedIndex = 0;
             }
-            richTextBox1_TextChanged(checkBoxUseAzureSyntax, new EventArgs());
+            richTextBox1_TextChanged(checkBoxCSharpNaming, new EventArgs());
         }
 
         private void saveToolStripButton_Click(object sender, EventArgs e)
@@ -381,6 +398,36 @@ namespace LiquidMapTestApp
         {
             var form = new AboutBox();
             form.ShowDialog();
+        }
+
+        private void loadTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var templateText = textBoxTemplate.Text;
+
+            var rootElement = comboBox2.Text;
+
+            var t1 = DateTime.Now;
+
+            for (int i = 0; i < 10000; i++)
+            {
+                var transformer = new Transformer(templateText, !checkBoxCSharpNaming.Checked);
+
+                var result3 = transformer.RenderFromString(contentValue, rootElement);
+            }
+
+            var t2 = DateTime.Now;
+
+            var delta = (t2 - t1).TotalSeconds;
+            toolStripStatusLabel1.Text = $"Actual time for 10000 iterations: {Math.Round(delta, 5)} secs";
+
+        }
+
+        private void refreshToolStripButton_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(TemplateFileName))
+            {
+                RefreshTemplate();
+            }
         }
     }
 }

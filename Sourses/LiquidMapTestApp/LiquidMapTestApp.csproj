@@ -33,11 +33,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotLiquid, Version=2.0.361.0, Culture=neutral, PublicKeyToken=82e46016ecf9f07c, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotLiquid.2.0.361\lib\net45\DotLiquid.dll</HintPath>
+    <Reference Include="DotLiquid, Version=2.1.457.0, Culture=neutral, PublicKeyToken=82e46016ecf9f07c, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotLiquid.2.1.457\lib\net45\DotLiquid.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,7 +56,8 @@
     <Compile Include="AboutBox1.Designer.cs">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryConverter.cs" />
+    <Compile Include="CustomFilters.cs" />
+    <Compile Include="Helpers\DictionaryConverter.cs" />
     <Compile Include="Helpers\CsvHelper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -106,6 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Save_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Refresh_16x.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiquidMapTestApp.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -22,6 +23,9 @@ namespace LiquidMapTestApp
             {
                 DotLiquid.Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
             }
+
+            // register custom filters
+            DotLiquid.Template.RegisterFilter(typeof(CustomFilters));
 
             LiquidTemplate = DotLiquid.Template.Parse(template);
             LiquidTemplate.MakeThreadSafe();
