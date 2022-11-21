@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LiquidMapTestApp
+﻿namespace LiquidMapTestApp
 {
     public class LiquidSyntax
     {
@@ -34,9 +28,12 @@ namespace LiquidMapTestApp
             // Additional filters
             "date", "default", "default_errors", "default_pagination", "format_address", "highlight", "highlight_active_tag", "json", "weight_with_unit", "placeholder_svg_tag",
             // Color, Font, Html filters
+        };
 
+        public static string[] CustomFilters = new[]
+        {
             // my custom filters
-            "format"
+            "format", "where_is_null",
         };
 
     }

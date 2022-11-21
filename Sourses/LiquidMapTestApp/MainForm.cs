@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using DotLiquid;
-using DotLiquid.NamingConventions;
 using LiquidMapTestApp.Helpers;
 using Newtonsoft.Json;
 
@@ -207,19 +201,20 @@ namespace LiquidMapTestApp
 
                 var t1 = DateTime.Now;
 
-                var transformer = new Transformer(templateText, !checkBoxCSharpNaming.Checked);
-
-                var result3 = transformer.RenderFromString(contentValue, rootElement);
+                var template = TransformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
+                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
 
                 var t2 = DateTime.Now;
 
                 var delta = (t2 - t1).TotalMilliseconds;
-                toolStripStatusLabel1.Text = $"Estimated time for 10000 iterations: {Math.Round(delta/1000*10000, 5)} secs";
+                var estimatedSeconds = Math.Round(delta / 1000 * 10000, 5);
+                var estimatedMinutes = Math.Round(estimatedSeconds / 60, 2);
+                toolStripStatusLabel1.Text = $"Estimated time for 10000 iterations: {estimatedSeconds} secs, {estimatedMinutes} mins ";
 
-                if (toolStripButtonShowErrors.Checked && transformer.LiquidTemplate.Errors.Any())
+                if (toolStripButtonShowErrors.Checked && template.Errors.Any())
                 {
                     var message = "";
-                    foreach (var error in transformer.LiquidTemplate.Errors)
+                    foreach (var error in template.Errors)
                     {
                         message += $"Message: {error.Message}\nInnerException: {error.InnerException?.Message}\n\n";
                     }
@@ -244,32 +239,36 @@ namespace LiquidMapTestApp
             checkBoxCSharpNaming.Checked = true;
             tabControlResult.TabPages.Remove(tabPageResultJson);
             tabControlResult.TabPages.Remove(tabPageResultHTML);
-            comboBox1.SelectedIndex = (int)OutputFormat.Json;
+            cmbResultType.SelectedIndex = (int)OutputFormat.Json;
             
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            outputFormat = (OutputFormat) comboBox1.SelectedIndex;
+            outputFormat = (OutputFormat) cmbResultType.SelectedIndex;
 
             checkBoxAutoFormatJsonResult.Visible = outputFormat == OutputFormat.Json;
             buttonFormatJsonResult.Visible = outputFormat == OutputFormat.Json;
             if (outputFormat == OutputFormat.Json)
             {
-                tabControlResult.TabPages.Add(tabPageResultJson);
+                if (!tabControlResult.TabPages.Contains(tabPageResultJson))
+                    tabControlResult.TabPages.Add(tabPageResultJson);
             }
             else
             {
-                tabControlResult.TabPages.Remove(tabPageResultJson);
+                if (tabControlResult.TabPages.Contains(tabPageResultJson))
+                    tabControlResult.TabPages.Remove(tabPageResultJson);
             }
 
             if (outputFormat == OutputFormat.Html)
             {
-                tabControlResult.TabPages.Add(tabPageResultHTML);
+                if (!tabControlResult.TabPages.Contains(tabPageResultHTML))
+                    tabControlResult.TabPages.Add(tabPageResultHTML);
             }
             else
             {
-                tabControlResult.TabPages.Remove(tabPageResultHTML);
+                if (tabControlResult.TabPages.Contains(tabPageResultHTML))
+                    tabControlResult.TabPages.Remove(tabPageResultHTML);
             }
             webBrowser1.DocumentText = "";
         }
@@ -295,7 +294,7 @@ namespace LiquidMapTestApp
             {
                 textBoxTemplate.SaveFile(saveFileDialog1.FileName, RichTextBoxStreamType.PlainText);
                 TemplateFileName = saveFileDialog1.FileName;
-                tabPage5.Text = "Template";
+                tabPageTemplateText.Text = "Template";
             }
         }
 
@@ -391,7 +390,7 @@ namespace LiquidMapTestApp
         private void textBoxTemplate_KeyPress(object sender, KeyPressEventArgs e)
         {
             TemplateChanged = true;
-            tabPage5.Text = "Template *";
+            tabPageTemplateText.Text = "Template *";
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -408,17 +407,29 @@ namespace LiquidMapTestApp
 
             var t1 = DateTime.Now;
 
-            for (int i = 0; i < 10000; i++)
-            {
-                var transformer = new Transformer(templateText, !checkBoxCSharpNaming.Checked);
+            var template = TransformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
 
-                var result3 = transformer.RenderFromString(contentValue, rootElement);
+            int[] items = new int[10000];
+
+            foreach (var item in items)
+            {
+                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
             }
 
             var t2 = DateTime.Now;
 
             var delta = (t2 - t1).TotalSeconds;
-            toolStripStatusLabel1.Text = $"Actual time for 10000 iterations: {Math.Round(delta, 5)} secs";
+
+            items.AsParallel().ForAll(item =>
+            {
+                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+            }
+            );
+
+            t1 = DateTime.Now;
+            var delta2 = (t1 - t2).TotalSeconds;
+
+            toolStripStatusLabel1.Text = $"Actual time for 10000 iterations: foreach: {Math.Round(delta, 5)} secs, parallel: {Math.Round(delta2, 5)} secs";
 
         }
 

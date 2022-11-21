@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
@@ -8,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Liquid Template Tester")]
 [assembly: AssemblyDescription("The tool to quick test the liquid template")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Aleh Luksha & Co :)")]
+[assembly: AssemblyCompany("aleh.luksha@hotmail.com")]
 [assembly: AssemblyProduct("Liquid Template Tester")]
-[assembly: AssemblyCopyright("Copyright © Aleh Luksha 2019-2021")]
+[assembly: AssemblyCopyright("Copyright © Aleh Luksha 2019-2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

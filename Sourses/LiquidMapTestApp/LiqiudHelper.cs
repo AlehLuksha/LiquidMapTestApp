@@ -28,6 +28,13 @@ namespace LiquidMapTestApp
                 : LiquidSyntax.Filters)})\b";
             MatchCollection filterMatches = Regex.Matches(codeRichTextBox.Text, filters);
 
+            // getting custom filters
+            string customFilters = $@"\b({string.Join("|", isCSharpNamingConvention
+                ? LiquidSyntax.CustomFilters.ToList().Select(x => ConvertToCSharpName(x))
+                : LiquidSyntax.CustomFilters)})\b";
+            MatchCollection customFilterMatches = Regex.Matches(codeRichTextBox.Text, customFilters);
+
+
             // getting types/classes from the text 
             string types = @"\b(Console)\b";
             MatchCollection typeMatches = Regex.Matches(codeRichTextBox.Text, types);
@@ -90,6 +97,13 @@ namespace LiquidMapTestApp
                 codeRichTextBox.SelectionFont = _keywordFont;
             }
 
+            foreach (Match m in customFilterMatches)
+            {
+                codeRichTextBox.SelectionStart = m.Index;
+                codeRichTextBox.SelectionLength = m.Length;
+                codeRichTextBox.SelectionColor = Color.Red;
+                codeRichTextBox.SelectionFont = _keywordFont;
+            }
             // restoring the original colors, for further writing
             codeRichTextBox.SelectionStart = originalIndex;
             codeRichTextBox.SelectionLength = originalLength;
