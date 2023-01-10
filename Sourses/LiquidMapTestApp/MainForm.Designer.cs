@@ -264,7 +264,7 @@
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(164, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(277, 6);
             // 
             // helpToolStripMenuItem
             // 
@@ -287,7 +287,7 @@
             this.tabControlData.Controls.Add(this.tabPageDataJsonTree);
             this.tabControlData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlData.Location = new System.Drawing.Point(0, 66);
-            this.tabControlData.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControlData.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlData.Name = "tabControlData";
             this.tabControlData.SelectedIndex = 0;
             this.tabControlData.Size = new System.Drawing.Size(383, 509);
@@ -297,9 +297,9 @@
             // 
             this.tabPageDataText.Controls.Add(this.panelData);
             this.tabPageDataText.Location = new System.Drawing.Point(4, 25);
-            this.tabPageDataText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageDataText.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageDataText.Name = "tabPageDataText";
-            this.tabPageDataText.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageDataText.Padding = new System.Windows.Forms.Padding(4);
             this.tabPageDataText.Size = new System.Drawing.Size(375, 480);
             this.tabPageDataText.TabIndex = 0;
             this.tabPageDataText.Text = "Input data";
@@ -311,7 +311,7 @@
             this.panelData.Controls.Add(this.textBoxData);
             this.panelData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelData.Location = new System.Drawing.Point(4, 4);
-            this.panelData.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panelData.Margin = new System.Windows.Forms.Padding(4);
             this.panelData.Name = "panelData";
             this.panelData.Size = new System.Drawing.Size(367, 472);
             this.panelData.TabIndex = 3;
@@ -321,7 +321,7 @@
             this.textBoxData.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxData.Location = new System.Drawing.Point(0, 0);
-            this.textBoxData.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxData.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxData.Name = "textBoxData";
             this.textBoxData.Size = new System.Drawing.Size(365, 470);
             this.textBoxData.TabIndex = 2;
@@ -332,10 +332,10 @@
             // 
             this.tabPageDataJsonTree.Controls.Add(this.treeView1);
             this.tabPageDataJsonTree.Location = new System.Drawing.Point(4, 25);
-            this.tabPageDataJsonTree.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageDataJsonTree.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageDataJsonTree.Name = "tabPageDataJsonTree";
-            this.tabPageDataJsonTree.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPageDataJsonTree.Size = new System.Drawing.Size(469, 600);
+            this.tabPageDataJsonTree.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageDataJsonTree.Size = new System.Drawing.Size(375, 467);
             this.tabPageDataJsonTree.TabIndex = 1;
             this.tabPageDataJsonTree.Text = "Tree";
             this.tabPageDataJsonTree.UseVisualStyleBackColor = true;
@@ -344,9 +344,9 @@
             // 
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(4, 4);
-            this.treeView1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.treeView1.Margin = new System.Windows.Forms.Padding(4);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(461, 592);
+            this.treeView1.Size = new System.Drawing.Size(367, 459);
             this.treeView1.TabIndex = 1;
             // 
             // tabControlResult
@@ -356,7 +356,7 @@
             this.tabControlResult.Controls.Add(this.tabPageResultHTML);
             this.tabControlResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlResult.Location = new System.Drawing.Point(0, 66);
-            this.tabControlResult.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControlResult.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlResult.Name = "tabControlResult";
             this.tabControlResult.SelectedIndex = 0;
             this.tabControlResult.Size = new System.Drawing.Size(388, 509);
@@ -366,9 +366,9 @@
             // 
             this.tabPageResultText.Controls.Add(this.panelResult);
             this.tabPageResultText.Location = new System.Drawing.Point(4, 25);
-            this.tabPageResultText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageResultText.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageResultText.Name = "tabPageResultText";
-            this.tabPageResultText.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageResultText.Padding = new System.Windows.Forms.Padding(4);
             this.tabPageResultText.Size = new System.Drawing.Size(380, 480);
             this.tabPageResultText.TabIndex = 0;
             this.tabPageResultText.Text = "Result";
@@ -380,7 +380,7 @@
             this.panelResult.Controls.Add(this.textBoxResult);
             this.panelResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelResult.Location = new System.Drawing.Point(4, 4);
-            this.panelResult.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panelResult.Margin = new System.Windows.Forms.Padding(4);
             this.panelResult.Name = "panelResult";
             this.panelResult.Size = new System.Drawing.Size(372, 472);
             this.panelResult.TabIndex = 3;
@@ -390,7 +390,7 @@
             this.textBoxResult.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxResult.Location = new System.Drawing.Point(0, 0);
-            this.textBoxResult.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxResult.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxResult.Name = "textBoxResult";
             this.textBoxResult.Size = new System.Drawing.Size(370, 470);
             this.textBoxResult.TabIndex = 2;
@@ -401,10 +401,10 @@
             // 
             this.tabPageResultJson.Controls.Add(this.treeView2);
             this.tabPageResultJson.Location = new System.Drawing.Point(4, 25);
-            this.tabPageResultJson.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageResultJson.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageResultJson.Name = "tabPageResultJson";
-            this.tabPageResultJson.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPageResultJson.Size = new System.Drawing.Size(380, 473);
+            this.tabPageResultJson.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageResultJson.Size = new System.Drawing.Size(380, 467);
             this.tabPageResultJson.TabIndex = 1;
             this.tabPageResultJson.Text = "Tree";
             this.tabPageResultJson.UseVisualStyleBackColor = true;
@@ -413,9 +413,9 @@
             // 
             this.treeView2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView2.Location = new System.Drawing.Point(4, 4);
-            this.treeView2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.treeView2.Margin = new System.Windows.Forms.Padding(4);
             this.treeView2.Name = "treeView2";
-            this.treeView2.Size = new System.Drawing.Size(372, 465);
+            this.treeView2.Size = new System.Drawing.Size(372, 459);
             this.treeView2.TabIndex = 1;
             // 
             // tabPageResultHTML
@@ -425,7 +425,7 @@
             this.tabPageResultHTML.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPageResultHTML.Name = "tabPageResultHTML";
             this.tabPageResultHTML.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPageResultHTML.Size = new System.Drawing.Size(380, 473);
+            this.tabPageResultHTML.Size = new System.Drawing.Size(380, 467);
             this.tabPageResultHTML.TabIndex = 2;
             this.tabPageResultHTML.Text = "HTML";
             this.tabPageResultHTML.UseVisualStyleBackColor = true;
@@ -434,17 +434,17 @@
             // 
             this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webBrowser1.Location = new System.Drawing.Point(3, 2);
-            this.webBrowser1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.webBrowser1.Margin = new System.Windows.Forms.Padding(4);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(27, 25);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(374, 469);
+            this.webBrowser1.Size = new System.Drawing.Size(374, 463);
             this.webBrowser1.TabIndex = 0;
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -467,7 +467,7 @@
             this.panelDataOptions.Controls.Add(this.toolStrip1);
             this.panelDataOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelDataOptions.Location = new System.Drawing.Point(0, 0);
-            this.panelDataOptions.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panelDataOptions.Margin = new System.Windows.Forms.Padding(4);
             this.panelDataOptions.Name = "panelDataOptions";
             this.panelDataOptions.Size = new System.Drawing.Size(383, 66);
             this.panelDataOptions.TabIndex = 2;
@@ -475,7 +475,7 @@
             // buttonSearch
             // 
             this.buttonSearch.Location = new System.Drawing.Point(151, 30);
-            this.buttonSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonSearch.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(100, 28);
             this.buttonSearch.TabIndex = 2;
@@ -486,7 +486,7 @@
             // textBoxDataSearch
             // 
             this.textBoxDataSearch.Location = new System.Drawing.Point(11, 31);
-            this.textBoxDataSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxDataSearch.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxDataSearch.Name = "textBoxDataSearch";
             this.textBoxDataSearch.Size = new System.Drawing.Size(132, 22);
             this.textBoxDataSearch.TabIndex = 1;
@@ -522,7 +522,7 @@
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer2.Name = "splitContainer2";
             // 
             // splitContainer2.Panel1
@@ -544,7 +544,7 @@
             this.tabControlTemplate.Controls.Add(this.tabPageTemplateText);
             this.tabControlTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlTemplate.Location = new System.Drawing.Point(0, 66);
-            this.tabControlTemplate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControlTemplate.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlTemplate.Name = "tabControlTemplate";
             this.tabControlTemplate.SelectedIndex = 0;
             this.tabControlTemplate.Size = new System.Drawing.Size(432, 509);
@@ -554,9 +554,9 @@
             // 
             this.tabPageTemplateText.Controls.Add(this.panelTemplate);
             this.tabPageTemplateText.Location = new System.Drawing.Point(4, 25);
-            this.tabPageTemplateText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageTemplateText.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageTemplateText.Name = "tabPageTemplateText";
-            this.tabPageTemplateText.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageTemplateText.Padding = new System.Windows.Forms.Padding(4);
             this.tabPageTemplateText.Size = new System.Drawing.Size(424, 480);
             this.tabPageTemplateText.TabIndex = 0;
             this.tabPageTemplateText.Text = "Template";
@@ -568,7 +568,7 @@
             this.panelTemplate.Controls.Add(this.textBoxTemplate);
             this.panelTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelTemplate.Location = new System.Drawing.Point(4, 4);
-            this.panelTemplate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panelTemplate.Margin = new System.Windows.Forms.Padding(4);
             this.panelTemplate.Name = "panelTemplate";
             this.panelTemplate.Size = new System.Drawing.Size(416, 472);
             this.panelTemplate.TabIndex = 2;
@@ -578,7 +578,7 @@
             this.textBoxTemplate.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBoxTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxTemplate.Location = new System.Drawing.Point(0, 0);
-            this.textBoxTemplate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxTemplate.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxTemplate.Name = "textBoxTemplate";
             this.textBoxTemplate.Size = new System.Drawing.Size(414, 470);
             this.textBoxTemplate.TabIndex = 0;
@@ -595,7 +595,7 @@
             this.panelTemplateTools.Controls.Add(this.checkBoxCSharpNaming);
             this.panelTemplateTools.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTemplateTools.Location = new System.Drawing.Point(0, 0);
-            this.panelTemplateTools.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panelTemplateTools.Margin = new System.Windows.Forms.Padding(4);
             this.panelTemplateTools.Name = "panelTemplateTools";
             this.panelTemplateTools.Size = new System.Drawing.Size(432, 66);
             this.panelTemplateTools.TabIndex = 1;
@@ -692,8 +692,9 @@
             // loadTestToolStripMenuItem
             // 
             this.loadTestToolStripMenuItem.Name = "loadTestToolStripMenuItem";
-            this.loadTestToolStripMenuItem.Size = new System.Drawing.Size(157, 26);
+            this.loadTestToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.loadTestToolStripMenuItem.Text = "Load test";
+            this.loadTestToolStripMenuItem.Visible = false;
             this.loadTestToolStripMenuItem.Click += new System.EventHandler(this.loadTestToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
@@ -725,7 +726,7 @@
             // 
             this.checkBoxCSharpNaming.AutoSize = true;
             this.checkBoxCSharpNaming.Location = new System.Drawing.Point(11, 34);
-            this.checkBoxCSharpNaming.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxCSharpNaming.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxCSharpNaming.Name = "checkBoxCSharpNaming";
             this.checkBoxCSharpNaming.Size = new System.Drawing.Size(95, 20);
             this.checkBoxCSharpNaming.TabIndex = 0;
@@ -743,7 +744,7 @@
             this.panelResultOptions.Controls.Add(this.chbxRemoveEmptyString);
             this.panelResultOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelResultOptions.Location = new System.Drawing.Point(0, 0);
-            this.panelResultOptions.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panelResultOptions.Margin = new System.Windows.Forms.Padding(4);
             this.panelResultOptions.Name = "panelResultOptions";
             this.panelResultOptions.Size = new System.Drawing.Size(388, 66);
             this.panelResultOptions.TabIndex = 3;
@@ -754,7 +755,7 @@
             this.buttonSaveResult.Image = global::LiquidMapTestApp.Properties.Resources.Save_16x;
             this.buttonSaveResult.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSaveResult.Location = new System.Drawing.Point(329, 30);
-            this.buttonSaveResult.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonSaveResult.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSaveResult.Name = "buttonSaveResult";
             this.buttonSaveResult.Size = new System.Drawing.Size(31, 28);
             this.buttonSaveResult.TabIndex = 5;
@@ -792,7 +793,7 @@
             this.checkBoxAutoFormatJsonResult.Checked = true;
             this.checkBoxAutoFormatJsonResult.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxAutoFormatJsonResult.Location = new System.Drawing.Point(216, 9);
-            this.checkBoxAutoFormatJsonResult.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxAutoFormatJsonResult.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxAutoFormatJsonResult.Name = "checkBoxAutoFormatJsonResult";
             this.checkBoxAutoFormatJsonResult.Size = new System.Drawing.Size(93, 20);
             this.checkBoxAutoFormatJsonResult.TabIndex = 2;
@@ -802,7 +803,7 @@
             // buttonFormatJsonResult
             // 
             this.buttonFormatJsonResult.Location = new System.Drawing.Point(216, 30);
-            this.buttonFormatJsonResult.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonFormatJsonResult.Margin = new System.Windows.Forms.Padding(4);
             this.buttonFormatJsonResult.Name = "buttonFormatJsonResult";
             this.buttonFormatJsonResult.Size = new System.Drawing.Size(104, 28);
             this.buttonFormatJsonResult.TabIndex = 1;
@@ -814,7 +815,7 @@
             // 
             this.chbxRemoveEmptyString.AutoSize = true;
             this.chbxRemoveEmptyString.Location = new System.Drawing.Point(8, 34);
-            this.chbxRemoveEmptyString.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chbxRemoveEmptyString.Margin = new System.Windows.Forms.Padding(4);
             this.chbxRemoveEmptyString.Name = "chbxRemoveEmptyString";
             this.chbxRemoveEmptyString.Size = new System.Drawing.Size(156, 20);
             this.chbxRemoveEmptyString.TabIndex = 0;
@@ -826,7 +827,7 @@
             this.panel1.Controls.Add(this.splitContainer1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 28);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1209, 575);
             this.panel1.TabIndex = 1;
@@ -857,7 +858,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.Text = "Liquid Map Tester";
             this.Load += new System.EventHandler(this.Form1_Load);

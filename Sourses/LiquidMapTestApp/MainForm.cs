@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LiquidMapTestApp.Helpers;
 using Newtonsoft.Json;
@@ -405,32 +408,90 @@ namespace LiquidMapTestApp
 
             var rootElement = comboBox2.Text;
 
-            var t1 = DateTime.Now;
+            var results = new List<string>();
+            Stopwatch stopwatch0 = Stopwatch.StartNew();
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             var template = TransformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
 
-            int[] items = new int[10000];
+            int count = 10000;
+            //toolStripProgressBar1.Maximum = (int)(count / 100);
+            //toolStripProgressBar1.Visible = true;
 
+            //toolStripProgressBar1.Value = 0;
+            int[] items = new int[count];
+
+            #region case1
+            int i = 0;
             foreach (var item in items)
             {
                 var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+                i++;
+                if (i % 100 == 0)
+                {
+                    //toolStripProgressBar1.Value++;
+                }
+
             }
+            stopwatch.Stop();
+            results.Add($"forech: {stopwatch.Elapsed.TotalSeconds} secs");
+            #endregion
 
-            var t2 = DateTime.Now;
-
-            var delta = (t2 - t1).TotalSeconds;
-
+            #region case2
+            stopwatch.Restart();
+            //toolStripProgressBar1.Value = 0;
             items.AsParallel().ForAll(item =>
             {
                 var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
             }
             );
 
-            t1 = DateTime.Now;
-            var delta2 = (t1 - t2).TotalSeconds;
+            stopwatch.Stop();
+            results.Add($"AsParallel().ForAll: {stopwatch.Elapsed.TotalSeconds} secs");
+            #endregion
 
-            toolStripStatusLabel1.Text = $"Actual time for 10000 iterations: foreach: {Math.Round(delta, 5)} secs, parallel: {Math.Round(delta2, 5)} secs";
+            #region case3
+            stopwatch.Restart();
+            Parallel.ForEach(items, item =>
+            {
+                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+            }
+            );
 
+            stopwatch.Stop();
+            results.Add($"Parallel.ForEach: {stopwatch.Elapsed.TotalSeconds} secs");
+
+            stopwatch.Restart();
+            Parallel.ForEach(items, item =>
+            {
+                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+            }
+            );
+
+            stopwatch.Stop();
+            results.Add($"Parallel.ForEach: {stopwatch.Elapsed.TotalSeconds} secs");
+            #endregion
+
+            #region case4
+            stopwatch.Restart();
+            var taskList = new List<Task>();
+            foreach (var item in items)
+            {
+                var itemTodo = item;
+                taskList.Add(Task.Run(() => TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage)));
+            }
+            Task.WaitAll(taskList.ToArray());
+
+            stopwatch.Stop();
+            results.Add($"Task.WaitAll: {stopwatch.Elapsed.TotalSeconds} secs");
+            #endregion
+
+            stopwatch0.Stop();
+            results.Add($"total: {stopwatch0.Elapsed.TotalSeconds} secs");
+
+            //toolStripProgressBar1.Visible = false;
+            toolStripStatusLabel1.Text = $"Actual time for {count} iterations: " + 
+                String.Join(";", results);
         }
 
         private void refreshToolStripButton_Click(object sender, EventArgs e)
