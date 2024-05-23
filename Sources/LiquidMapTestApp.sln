@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiquidMapTestApp", "LiquidMapTestApp\LiquidMapTestApp.csproj", "{A1F22883-F1FA-4DA0-9647-A89CDCA15BA8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{0A258D28-989B-4679-B4F5-299F4C71AFE5}"
+	ProjectSection(SolutionItems) = preProject
+		Samples\TestData\json1.json = Samples\TestData\json1.json
+		Samples\TestData\JsonArray1.json = Samples\TestData\JsonArray1.json
+		Samples\TestData\transformJson1.liquid = Samples\TestData\transformJson1.liquid
+		Samples\TestData\transformJsonArray1.liquid = Samples\TestData\transformJsonArray1.liquid
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransformFunctionApp", "Samples\TransformFunctionApp\TransformFunctionApp.csproj", "{B153C405-FC85-467A-B5BC-5B6D458BBA50}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{88237E7E-31A0-4171-984C-A97C5CF9B065}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotLiquidProcessor", "LiquidProcessor\DotLiquidProcessor.csproj", "{872CE8D6-29EF-4E6C-B2D2-BD856FAEEE60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiquidProcessor.Core", "LiquidProcessor.Core\LiquidProcessor.Core.csproj", "{80D7729A-771C-4DA9-AA19-C5F1A94E0B2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluidProcessor", "FluidProcessor\FluidProcessor.csproj", "{2BB13696-73F7-485F-A828-2CB8E134F4FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1F22883-F1FA-4DA0-9647-A89CDCA15BA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1F22883-F1FA-4DA0-9647-A89CDCA15BA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1F22883-F1FA-4DA0-9647-A89CDCA15BA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1F22883-F1FA-4DA0-9647-A89CDCA15BA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B153C405-FC85-467A-B5BC-5B6D458BBA50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B153C405-FC85-467A-B5BC-5B6D458BBA50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B153C405-FC85-467A-B5BC-5B6D458BBA50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B153C405-FC85-467A-B5BC-5B6D458BBA50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{872CE8D6-29EF-4E6C-B2D2-BD856FAEEE60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{872CE8D6-29EF-4E6C-B2D2-BD856FAEEE60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{872CE8D6-29EF-4E6C-B2D2-BD856FAEEE60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{872CE8D6-29EF-4E6C-B2D2-BD856FAEEE60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80D7729A-771C-4DA9-AA19-C5F1A94E0B2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80D7729A-771C-4DA9-AA19-C5F1A94E0B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80D7729A-771C-4DA9-AA19-C5F1A94E0B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80D7729A-771C-4DA9-AA19-C5F1A94E0B2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BB13696-73F7-485F-A828-2CB8E134F4FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BB13696-73F7-485F-A828-2CB8E134F4FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BB13696-73F7-485F-A828-2CB8E134F4FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BB13696-73F7-485F-A828-2CB8E134F4FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B153C405-FC85-467A-B5BC-5B6D458BBA50} = {88237E7E-31A0-4171-984C-A97C5CF9B065}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B592F876-DEC6-4A43-BD82-0DA223C4E071}
+	EndGlobalSection
+EndGlobal
