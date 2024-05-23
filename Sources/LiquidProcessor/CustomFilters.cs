@@ -44,7 +44,7 @@ namespace DotLiquidProcessor
         }
 
         /// <summary>
-        /// Have the null value.
+        /// Is the null value.
         /// </summary>
         /// <param name="any">The any.</param>
         /// <param name="propertyName">The property name.</param>
@@ -69,7 +69,7 @@ namespace DotLiquidProcessor
         /// Returns null the if object is empty else returns a object.
         ///
         /// Usage example: 
-        /// "dateOfRegistry": {{content.dateOfRegistry | Date: 'yyyy-MM-ddTHH:mm:ss' | NullIfEmptyString }},
+        /// "dateOfRegistry": {{content.dateOfRegistry | Date: 'yyyy-MM-ddTHH:mm:ss' | NullIfEmpty }},
         ///
         /// Result:
         /// "numberOfDoors": null,
@@ -92,7 +92,7 @@ namespace DotLiquidProcessor
         /// Returns null the if string is empty else returns a string in double quotes.
         ///
         /// Usage example: 
-        /// "dateOfRegistry": {{content.dateOfRegistry | Date: 'yyyy-MM-ddTHH:mm:ss' | NullIfEmptyString }},
+        /// "dateOfRegistry": {{content.dateOfRegistry | Date: 'yyyy-MM-ddTHH:mm:ss' | NullIfEmptyElseString }},
         ///
         /// Result:
         /// "dateOfRegistry": null,
