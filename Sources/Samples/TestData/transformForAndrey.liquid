@@ -1,0 +1,14 @@
+{
+        "profile_field_answers": {
+            "upf0": "{{content.profile_field_answers.upf0}}",
+            "upf3": "{{content.Employee.Job_Category}}",
+            "upf4": "{{content.Employee.Company}}",
+            "upf5": "{{content.Employee.Work_State}}",
+            "upf6": "{{content.Employee.Work_State}}",
+            "upf7": "43534",
+{% if content.profile_field_answers.upf8 == blank or content.profile_field_answers.upf8 == null %}
+{% else %}
+"upf8": "{{content.profile_field_answers.upf8}}"
+{% endif %}
+        }
+}

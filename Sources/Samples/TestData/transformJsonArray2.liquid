@@ -1,0 +1,17 @@
+{% assign items = content.items %}
+[{%- for item in items -%}
+{
+    "id": "60503985",
+    "email": "andrei.golovistikov@gmail.com",
+    "user": {
+        "city": "Minsk",
+        "email": "andrei.golovistikov@gmail.com",
+        "profile_field_answers": {
+            "upf0": "{{item.field1}}",
+            "upf3": "{{item.field2}}",
+            "upf6": "{{item.field3}}"
+        }
+    }
+}
+{% if forloop.last == false %},{% endif %}{%- endfor -%}
+]
