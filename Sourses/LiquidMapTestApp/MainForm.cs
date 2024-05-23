@@ -9,7 +9,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LiquidMapTestApp.Helpers;
+using DotLiquidProcessor;
+using LiquidProcessor.Core.Interfaces;
 using Newtonsoft.Json;
+using DotLiquid;
 
 namespace LiquidMapTestApp
 {
@@ -41,6 +44,8 @@ namespace LiquidMapTestApp
 
         private bool TemplateChanged { get; set; }
 
+        private ITransformationService<Template> _transformationService;
+
         public MainForm()
         {
             InitializeComponent();
@@ -51,6 +56,9 @@ namespace LiquidMapTestApp
             textBoxResult.Font = EditorDefaultFont;
 
             LiqiudHelper.Init(textBoxTemplate);
+
+            _transformationService = new DotLiquidProcessor.TransformationService();
+            //_transformationService = new FluidProcessor.TransformationService();
         }
 
         private void DisplayText(RichTextBox textBox, string text)
@@ -204,8 +212,8 @@ namespace LiquidMapTestApp
 
                 var t1 = DateTime.Now;
 
-                var template = TransformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
-                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+                var template = _transformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
+                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
 
                 var t2 = DateTime.Now;
 
@@ -412,7 +420,7 @@ namespace LiquidMapTestApp
             Stopwatch stopwatch0 = Stopwatch.StartNew();
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            var template = TransformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
+            var template = _transformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
 
             int count = 10000;
             //toolStripProgressBar1.Maximum = (int)(count / 100);
@@ -425,7 +433,7 @@ namespace LiquidMapTestApp
             int i = 0;
             foreach (var item in items)
             {
-                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
                 i++;
                 if (i % 100 == 0)
                 {
@@ -442,7 +450,7 @@ namespace LiquidMapTestApp
             //toolStripProgressBar1.Value = 0;
             items.AsParallel().ForAll(item =>
             {
-                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
             }
             );
 
@@ -454,7 +462,7 @@ namespace LiquidMapTestApp
             stopwatch.Restart();
             Parallel.ForEach(items, item =>
             {
-                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
             }
             );
 
@@ -464,7 +472,7 @@ namespace LiquidMapTestApp
             stopwatch.Restart();
             Parallel.ForEach(items, item =>
             {
-                var result3 = TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
             }
             );
 
@@ -478,7 +486,7 @@ namespace LiquidMapTestApp
             foreach (var item in items)
             {
                 var itemTodo = item;
-                taskList.Add(Task.Run(() => TransformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage)));
+                taskList.Add(Task.Run(() => _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage)));
             }
             Task.WaitAll(taskList.ToArray());
 

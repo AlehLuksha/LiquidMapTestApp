@@ -33,7 +33,7 @@
         public static string[] CustomFilters = new[]
         {
             // my custom filters
-            "format", "where_is_null",
+            "format", "where_is_null", "null_if_empty", "null_if_empty_else_string"
         };
 
     }

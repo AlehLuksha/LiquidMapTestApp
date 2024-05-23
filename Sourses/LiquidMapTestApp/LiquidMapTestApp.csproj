@@ -60,8 +60,6 @@
     <Compile Include="AboutBox1.Designer.cs">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
-    <Compile Include="CustomFilters.cs" />
-    <Compile Include="Helpers\DictionaryConverter.cs" />
     <Compile Include="Helpers\CsvHelper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -81,7 +79,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="TransformationService.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </EmbeddedResource>
@@ -115,6 +112,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Refresh_16x.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FluidProcessor\FluidProcessor.csproj">
+      <Project>{2bb13696-73f7-485f-a828-2cb8e134f4fe}</Project>
+      <Name>FluidProcessor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LiquidProcessor.Core\LiquidProcessor.Core.csproj">
+      <Project>{80d7729a-771c-4da9-aa19-c5f1a94e0b2e}</Project>
+      <Name>LiquidProcessor.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LiquidProcessor\DotLiquidProcessor.csproj">
+      <Project>{872ce8d6-29ef-4e6c-b2d2-bd856faeee60}</Project>
+      <Name>DotLiquidProcessor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

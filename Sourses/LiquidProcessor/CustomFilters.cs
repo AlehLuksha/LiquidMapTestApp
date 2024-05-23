@@ -3,13 +3,15 @@ using System;
 using System.Collections;
 using System.Linq;
 
-namespace LiquidMapTestApp
+namespace DotLiquidProcessor
 {
     /// <summary>Additional custom filters</summary>
     public static class CustomFilters
     {
+        private const string NullAsString = "null";
+
         /// <summary>
-        /// Formats the numbers.
+        /// Formats the specified input object.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="format">The format.</param>
@@ -61,6 +63,52 @@ namespace LiquidMapTestApp
             }
 
             return propertyValue == null;
+        }
+
+        /// <summary>
+        /// Returns null the if object is empty else returns a object.
+        ///
+        /// Usage example: 
+        /// "dateOfRegistry": {{content.dateOfRegistry | Date: 'yyyy-MM-ddTHH:mm:ss' | NullIfEmptyString }},
+        ///
+        /// Result:
+        /// "numberOfDoors": null,
+        /// "numberOfDoors": 5,
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>A string.</returns>
+        public static object NullIfEmpty(object input)
+        {
+            if (input == null)
+                return NullAsString;
+            else if (string.IsNullOrEmpty(input.ToString()))
+                return NullAsString;
+
+            var result = input;
+            return result;
+        }
+
+        /// <summary>
+        /// Returns null the if string is empty else returns a string in double quotes.
+        ///
+        /// Usage example: 
+        /// "dateOfRegistry": {{content.dateOfRegistry | Date: 'yyyy-MM-ddTHH:mm:ss' | NullIfEmptyString }},
+        ///
+        /// Result:
+        /// "dateOfRegistry": null,
+        /// "dateOfRegistry": "2022-01-01T00:00:00",
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>A string.</returns>
+        public static string NullIfEmptyElseString(object input)
+        {
+            if (input == null)
+                return NullAsString;
+            else if (string.IsNullOrEmpty(input.ToString()))
+                return NullAsString;
+
+            var result = $"\"{input}\"";
+            return result;
         }
     }
 }

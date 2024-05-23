@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using DotLiquid;
-using LiquidMapTestApp.Helpers;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using LiquidProcessor.Core.Interfaces;
 
-namespace LiquidMapTestApp
+namespace DotLiquidProcessor
 {
     /// <summary>The service to transform Json to Text\Json using liquid templates</summary>
-    public class TransformationService
+    public class TransformationService: ITransformationService<Template>
     {
         /// <summary>Parses the liquid template.</summary>
         /// <param name="log">The log.</param>
         /// <param name="liquidTemplate">The liquid template.</param>
         /// <param name="errorMessage">The error message.</param>
         /// <returns>Template object</returns>
-        public static Template ParseTemplate(ILogger log, string liquidTemplate, bool useRubyNamingConvention, out string errorMessage)
+        public Template ParseTemplate(ILogger log, string liquidTemplate, bool useRubyNamingConvention, out string errorMessage)
         {
             if (string.IsNullOrEmpty(liquidTemplate))
             {
@@ -41,7 +41,8 @@ namespace LiquidMapTestApp
             catch (Exception ex)
             {
                 if (log != null)
-                { log.LogError(ex.Message, ex);
+                {
+                    log.LogError(ex.Message, ex);
                 }
                 errorMessage = $"Error parsing Liquid template: {ex.Message}";
                 return null;
@@ -54,7 +55,7 @@ namespace LiquidMapTestApp
         /// <param name="jsonData">The json data.</param>
         /// <param name="errorMessage">The error message.</param>
         /// <returns>Transformed string</returns>
-        public static string TransformJsonToText(ILogger log, Template template, string jsonData, string rootElement,
+        public string TransformJsonToText(ILogger log, Template template, string jsonData, string rootElement,
             out string errorMessage)
         {
             if (string.IsNullOrEmpty(jsonData))
