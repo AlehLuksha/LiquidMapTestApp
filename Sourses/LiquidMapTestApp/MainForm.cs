@@ -13,6 +13,10 @@ using DotLiquidProcessor;
 using LiquidProcessor.Core.Interfaces;
 using Newtonsoft.Json;
 using DotLiquid;
+using Newtonsoft.Json.Linq;
+using System.Xml;
+using Fluid.Parser;
+using Fluid;
 
 namespace LiquidMapTestApp
 {
@@ -44,7 +48,8 @@ namespace LiquidMapTestApp
 
         private bool TemplateChanged { get; set; }
 
-        private ITransformationService<Template> _transformationService;
+        //private ITransformationService<Template> _transformationService;
+        private ITransformationService<IFluidTemplate> _transformationService;
 
         public MainForm()
         {
@@ -57,8 +62,8 @@ namespace LiquidMapTestApp
 
             LiqiudHelper.Init(textBoxTemplate);
 
-            _transformationService = new DotLiquidProcessor.TransformationService();
-            //_transformationService = new FluidProcessor.TransformationService();
+            //_transformationService = new DotLiquidProcessor.TransformationService();
+            _transformationService = new FluidProcessor.TransformationService();
         }
 
         private void DisplayText(RichTextBox textBox, string text)
@@ -67,15 +72,23 @@ namespace LiquidMapTestApp
             textBox.Text = text;
         }
 
-        private void DisplayData(string json)
+        private void DisplayData(string contentValue)
         {
             // load to TextBox
-            DisplayText(textBoxData, json);
+            DisplayText(textBoxData, contentValue);
 
             try
             {
                 // load to TreeView
-                dynamic data = JsonConvert.DeserializeObject(json);
+
+                var content = contentValue;
+
+                if (cmbSourceType.SelectedIndex == (int)SourceFormat.Xml)
+                {
+                    content = ConvertXMlToSJson(contentValue);
+                }
+
+                dynamic data = JsonConvert.DeserializeObject(content);
                 ObjectToTreeView.SetObjectAsJson(treeView1, data);
             }
             catch (Exception e)
@@ -105,7 +118,7 @@ namespace LiquidMapTestApp
                 dynamic outputData = JsonConvert.DeserializeObject(text
                     , new JsonSerializerSettings(){FloatParseHandling = FloatParseHandling.Decimal}
                     );
-                text = JsonConvert.SerializeObject(outputData, Formatting.Indented);
+                text = JsonConvert.SerializeObject(outputData, Newtonsoft.Json.Formatting.Indented);
             }
 
             DisplayText(textBoxResult, text);
@@ -175,7 +188,7 @@ namespace LiquidMapTestApp
         {
             var json = textBoxResult.Text;
 
-            var resultString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(json), Formatting.Indented);
+            var resultString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(json), Newtonsoft.Json.Formatting.Indented);
 
             DisplayResult(resultString);
 
@@ -201,6 +214,65 @@ namespace LiquidMapTestApp
         {
             contentValue = textBoxData.Text;
         }
+        private JObject RemoveSpecialCharacters(JObject originalObject)
+        {
+            JObject newObject = new JObject();
+
+            foreach (var property in originalObject.Properties())
+            {
+                string newKey = property.Name.Replace("@", "").Replace(":", "");
+
+                if (property.Value is JObject)
+                {
+                    // Рекурсивный вызов для вложенных объектов
+                    newObject[newKey] = RemoveSpecialCharacters((JObject)property.Value);
+                }
+                else if (property.Value is JArray)
+                {
+                    // Обрабатываем массивы
+                    JArray newArray = new JArray();
+                    foreach (var item in (JArray)property.Value)
+                    {
+                        if (item is JObject)
+                        {
+                            newArray.Add(RemoveSpecialCharacters((JObject)item));
+                        }
+                        else
+                        {
+                            newArray.Add(item);
+                        }
+                    }
+                    newObject[newKey] = newArray;
+                }
+                else
+                {
+                    // Обычные значения
+                    newObject[newKey] = property.Value;
+                }
+            }
+
+            return newObject;
+        }
+
+        private string ConvertXMlToSJson(string xmlSource)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(xmlSource);
+
+            string jsonString = JsonConvert.SerializeXmlNode(doc, Newtonsoft.Json.Formatting.None, false);
+
+            // Парсинг JSON строки в JObject
+            JObject jsonObject = JObject.Parse(jsonString);
+
+            // Рекурсивно переименуем ключи, убрав '@' и ':'
+            //JObject processedObject = RemoveSpecialCharacters(jsonObject);
+            JObject processedObject = jsonObject as JObject;
+
+            // Вывод отредактированного JSON
+            string processedJson = processedObject.ToString(Newtonsoft.Json.Formatting.Indented);
+
+            return processedJson;
+        }
 
         private void executeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -210,10 +282,26 @@ namespace LiquidMapTestApp
 
                 var rootElement = comboBox2.Text;
 
+                var content = contentValue;
+
                 var t1 = DateTime.Now;
 
                 var template = _transformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
-                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    var message = $"Message: {errorMessage}\n\n";
+
+                    DisplayText(textBoxResult, "Transformer errors: \n\n" + message);
+                    return;
+                }
+
+                if (cmbSourceType.SelectedIndex == (int)SourceFormat.Xml)
+                {
+                    content = ConvertXMlToSJson(contentValue);
+                }
+
+                var result3 = _transformationService.TransformJsonToText(null, template, content, rootElement, out errorMessage);
 
                 var t2 = DateTime.Now;
 
@@ -222,20 +310,20 @@ namespace LiquidMapTestApp
                 var estimatedMinutes = Math.Round(estimatedSeconds / 60, 2);
                 toolStripStatusLabel1.Text = $"Estimated time for 10000 iterations: {estimatedSeconds} secs, {estimatedMinutes} mins ";
 
-                if (toolStripButtonShowErrors.Checked && template.Errors.Any())
-                {
-                    var message = "";
-                    foreach (var error in template.Errors)
-                    {
-                        message += $"Message: {error.Message}\nInnerException: {error.InnerException?.Message}\n\n";
-                    }
+                //if (toolStripButtonShowErrors.Checked && template.Errors.Any())
+                //{
+                //    var message = "";
+                //    foreach (var error in template.Errors)
+                //    {
+                //        message += $"Message: {error.Message}\nInnerException: {error.InnerException?.Message}\n\n";
+                //    }
 
-                    DisplayText(textBoxResult, "Transformer errors: \n\n" + message);
-                }
-                else
-                {
+                //    DisplayText(textBoxResult, "Transformer errors: \n\n" + message);
+                //}
+                //else
+                //{
                     DisplayResult(result3);
-                }
+                //}
             }
             catch (Exception exception)
             {
@@ -251,6 +339,7 @@ namespace LiquidMapTestApp
             tabControlResult.TabPages.Remove(tabPageResultJson);
             tabControlResult.TabPages.Remove(tabPageResultHTML);
             cmbResultType.SelectedIndex = (int)OutputFormat.Json;
+            cmbSourceType.SelectedIndex = (int)OutputFormat.Json;
             
         }
 

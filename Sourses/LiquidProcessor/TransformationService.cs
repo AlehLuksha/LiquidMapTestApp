@@ -4,6 +4,7 @@ using DotLiquid;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using LiquidProcessor.Core.Interfaces;
+using Newtonsoft.Json.Serialization;
 
 namespace DotLiquidProcessor
 {
@@ -20,7 +21,7 @@ namespace DotLiquidProcessor
             if (string.IsNullOrEmpty(liquidTemplate))
             {
                 errorMessage = "Liquid template is required.";
-                return null;
+                return default;
             }
 
             if (!useRubyNamingConvention)
@@ -68,9 +69,32 @@ namespace DotLiquidProcessor
             try
             {
                 var transformInput = new Dictionary<string, object>();
-                var requestJson =
-                    JsonConvert.DeserializeObject<IDictionary<string, object>>(jsonData, new DictionaryConverter());
 
+                List<string> errors = new List<string>();
+
+                JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
+                serializerSettings.Error += delegate (object sender, ErrorEventArgs args)
+                {
+                    // only log an error once
+                    if (args.CurrentObject == args.ErrorContext.OriginalObject)
+                    {
+                        errors.Add(args.ErrorContext.Error.Message);
+                    }
+                };
+                serializerSettings.Converters.Add(new DictionaryConverter());
+
+                var requestJson =
+                    JsonConvert.DeserializeObject<IDictionary<string, object>>(jsonData, serializerSettings);
+
+                if (requestJson == null)
+                {
+                    errorMessage = $"Error parsing Json data: {string.Join(";", errors)}";
+                    if (log != null)
+                    {
+                        log.LogError(errorMessage);
+                    }
+                    return null;
+                }
                 // Wrap the JSON input in another content node to provide compatibility with Logic Apps Liquid transformations
                 transformInput.Add(rootElement, requestJson);
 

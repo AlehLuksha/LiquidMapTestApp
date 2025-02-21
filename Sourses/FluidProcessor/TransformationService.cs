@@ -1,12 +1,12 @@
-﻿using LiquidProcessor.Core.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Fluid;
+using LiquidProcessor.Core.Interfaces;
 using Microsoft.Extensions.Logging;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace FluidProcessor
@@ -61,7 +61,10 @@ namespace FluidProcessor
 
             try
             {
-                dynamic jObj = JsonConvert.DeserializeObject(jsonData);
+                // Wrap the JSON input in another content node to provide compatibility with Logic Apps Liquid transformations
+                var modifiedData = "{" + rootElement + ":" + jsonData + "}";
+
+                dynamic jObj = JsonConvert.DeserializeObject(modifiedData);
                 var context = new TemplateContext(jObj);
 
                 output = template.Render(context);

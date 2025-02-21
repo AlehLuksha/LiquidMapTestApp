@@ -8,4 +8,11 @@
         Html = 3
 
     }
+
+    internal enum SourceFormat
+    {
+        Json = 0,
+        Xml = 1
+
+    }
 }
