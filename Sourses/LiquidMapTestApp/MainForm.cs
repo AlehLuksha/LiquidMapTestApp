@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using DotLiquid;
+using Fluid;
+using LiquidMapTestApp.Helpers;
+using LiquidProcessor.Core.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using LiquidMapTestApp.Helpers;
-using DotLiquidProcessor;
-using LiquidProcessor.Core.Interfaces;
-using Newtonsoft.Json;
-using DotLiquid;
-using Newtonsoft.Json.Linq;
 using System.Xml;
-using Fluid.Parser;
-using Fluid;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace LiquidMapTestApp
 {
@@ -27,43 +23,141 @@ namespace LiquidMapTestApp
         private static int FontSize = 9;
         private readonly Font EditorDefaultFont = new Font(FontName, FontSize);
 
+        private string dataFileName;
         private string templateFileName;
+
         private string TemplateFileName
         {
             get => this.templateFileName;
             set
             {
-                this.templateFileName = value; 
+                this.templateFileName = value;
                 this.Text = $"{FormHeader} ({this.templateFileName})";
             }
         }
-        private String contentValue = "{}";
+        private string contentValue = "{}";
         private OutputFormat outputFormat = OutputFormat.PlainText;
 
 
-        private String ContentString(string rootElement)
+        private string ContentString(string rootElement)
         {
-                return "{" + rootElement + ":" + contentValue + "}";
+            return "{" + rootElement + ":" + contentValue + "}";
         }
 
         private bool TemplateChanged { get; set; }
 
-        //private ITransformationService<Template> _transformationService;
-        private ITransformationService<IFluidTemplate> _transformationService;
+        private ITransformationService<Template> _dotLiquidTransformationService;
+        private ITransformationService<IFluidTemplate> _fluidTransformationService;
+        private MySyntaxHighlighter.SyntaxHighlighter _syntaxHighlighter;
+        private bool disableHighlighting = false;
 
-        public MainForm()
+        public MainForm(
+            ITransformationService<Template> dotLiquidTransformationService,
+            ITransformationService<IFluidTemplate> fluidTransformationService
+            )
         {
             InitializeComponent();
+
+            this.DragEnter += new DragEventHandler(mainForm_DragEnter);
             this.Text = FormHeader;
 
+            #region Data
+            dataTreeView.AllowDrop = false;
+            dataTreeView.ItemDrag += new ItemDragEventHandler(treeView1_ItemDrag);
+            #endregion
+
+            #region Template
+            textBoxTemplate.AllowDrop = true;
+            textBoxTemplate.EnableAutoDragDrop = true;
+            textBoxTemplate.DragEnter += new DragEventHandler(textBox1_DragEnter);
+            textBoxTemplate.DragDrop += new DragEventHandler(textBox1_DragDrop);
+            #endregion
+
+            #region Result
+            #endregion
+
+            _dotLiquidTransformationService = dotLiquidTransformationService;
+            _fluidTransformationService = fluidTransformationService;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
             textBoxData.Font = EditorDefaultFont;
             textBoxTemplate.Font = EditorDefaultFont;
             textBoxResult.Font = EditorDefaultFont;
 
-            LiqiudHelper.Init(textBoxTemplate);
+            _syntaxHighlighter = new MySyntaxHighlighter.SyntaxHighlighter(textBoxTemplate);
+            InitLiquidSyntaxHighlighter();
 
-            //_transformationService = new DotLiquidProcessor.TransformationService();
-            _transformationService = new FluidProcessor.TransformationService();
+            checkBoxCSharpNaming.Checked = true;
+            comboBoxRootElement.SelectedIndex = 0;
+
+            cmbSourceType.SelectedIndex = (int)SourceFormat.Json;
+            cmbResultType.SelectedIndex = (int)OutputFormat.Json;
+            cmbEngineType.SelectedIndex = (int)EngineType.Fluent;
+
+            tabControlResult.TabPages.Remove(tabPageResultJson);
+            tabControlResult.TabPages.Remove(tabPageResultHTML);
+        }
+
+        private void mainForm_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+
+        private void treeView1_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            // Move the dragged node when the left mouse button is used.
+            if (e.Button == MouseButtons.Left)
+            {
+                DoDragDrop(e.Item, DragDropEffects.Move);
+            }
+
+            // Copy the dragged node when the right mouse button is used.
+            else if (e.Button == MouseButtons.Right)
+            {
+                DoDragDrop(e.Item, DragDropEffects.Copy);
+            }
+        }
+
+        private void textBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.Text))
+                e.Effect = DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void textBox1_DragDrop(object sender, DragEventArgs e)
+        {
+            int i;
+            string s;
+
+            var textBox = textBoxResult;
+
+            // Get start position to drop the text.  
+            i = textBox.SelectionStart;
+            s = textBox.Text.Substring(i);
+            textBox.Text = textBox.Text.Substring(0, i);
+
+            // Drop the text on to the RichTextBox.  
+            textBox.Text = textBox.Text +
+               e.Data.GetData(DataFormats.Text).ToString();
+            textBox.Text = textBox.Text + s;
+
+            e.Effect = DragDropEffects.None;
+        }
+
+        private void InitLiquidSyntaxHighlighter()
+        {
+            bool isCSharpNamingConvention = checkBoxCSharpNaming.Checked;
+            bool isFirstLetterUpper = cmbEngineType.SelectedIndex == (int)EngineType.DotLiquid;
+
+            //var syntaxHighlighter = new SyntaxHighlighter(textBoxTemplate);
+            //ApplyLiquidPatterns(syntaxHighlighter, isCSharpNamingConvention, isFirstLetterUpper);
+
+            if (_syntaxHighlighter != null)
+                _syntaxHighlighter.InitSyntax(isCSharpNamingConvention, isFirstLetterUpper);
         }
 
         private void DisplayText(RichTextBox textBox, string text)
@@ -85,11 +179,11 @@ namespace LiquidMapTestApp
 
                 if (cmbSourceType.SelectedIndex == (int)SourceFormat.Xml)
                 {
-                    content = ConvertXMlToSJson(contentValue);
+                    content = JsonHelper.ConvertXMlToSJson(contentValue, removeSpecialCharacters: false);
                 }
 
                 dynamic data = JsonConvert.DeserializeObject(content);
-                ObjectToTreeView.SetObjectAsJson(treeView1, data);
+                ObjectToTreeView.SetObjectAsJson(dataTreeView, data);
             }
             catch (Exception e)
             {
@@ -116,7 +210,7 @@ namespace LiquidMapTestApp
             {
                 // format to JSON
                 dynamic outputData = JsonConvert.DeserializeObject(text
-                    , new JsonSerializerSettings(){FloatParseHandling = FloatParseHandling.Decimal}
+                    , new JsonSerializerSettings() { FloatParseHandling = FloatParseHandling.Decimal }
                     );
                 text = JsonConvert.SerializeObject(outputData, Newtonsoft.Json.Formatting.Indented);
             }
@@ -139,8 +233,15 @@ namespace LiquidMapTestApp
         {
             openFileDialog1.Title = "Open Data File";
             openFileDialog1.Filter = "JSON files|*.json|All files|*.*";
+
+            if (!string.IsNullOrEmpty(openFileDialog1.FileName))
+            {
+                openFileDialog1.InitialDirectory = System.IO.Path.GetDirectoryName(openFileDialog1.FileName);
+            }
+
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                dataFileName = openFileDialog1.FileName;
                 var fileContent = File.ReadAllText(openFileDialog1.FileName);
 
                 contentValue = fileContent;
@@ -151,11 +252,17 @@ namespace LiquidMapTestApp
 
         private void openTemplateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Title = "Open Map File";
-            openFileDialog1.Filter = "Liquid map|*.liquid|JSON files|*.json|All files|*.*";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            openFileDialog2.Title = "Open Map File";
+            openFileDialog2.Filter = "Liquid map|*.liquid|JSON files|*.json|All files|*.*";
+
+            if (!string.IsNullOrEmpty(openFileDialog2.FileName))
             {
-                TemplateFileName = openFileDialog1.FileName;
+                openFileDialog2.InitialDirectory = System.IO.Path.GetDirectoryName(openFileDialog2.FileName);
+            }
+
+            if (openFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                TemplateFileName = openFileDialog2.FileName;
 
                 RefreshTemplate();
 
@@ -194,7 +301,7 @@ namespace LiquidMapTestApp
 
         }
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        private void textBoxTemplate_TextChanged(object sender, EventArgs e)
         {
             executeToolStripMenuItem.Enabled = textBoxTemplate.TextLength > 0;
             toolStripButtonExecute.Enabled = executeToolStripMenuItem.Enabled;
@@ -205,7 +312,15 @@ namespace LiquidMapTestApp
             // MANDATORY - focuses a label before highlighting (avoids blinking)
             labelTitle.Focus();
 
-            LiqiudHelper.HighlightLiquidSyntax(textBoxTemplate, checkBoxCSharpNaming.Checked);
+            if (_syntaxHighlighter != null)
+            {
+                _syntaxHighlighter.DisableHighlighting = disableHighlighting;
+
+                if (_syntaxHighlighter.IsDuringHighlight)
+                    return;
+
+                _syntaxHighlighter.HighlightSyntax();
+            }
             // giving back the focus
             textBoxTemplate.Focus();
         }
@@ -214,65 +329,7 @@ namespace LiquidMapTestApp
         {
             contentValue = textBoxData.Text;
         }
-        private JObject RemoveSpecialCharacters(JObject originalObject)
-        {
-            JObject newObject = new JObject();
 
-            foreach (var property in originalObject.Properties())
-            {
-                string newKey = property.Name.Replace("@", "").Replace(":", "");
-
-                if (property.Value is JObject)
-                {
-                    // Рекурсивный вызов для вложенных объектов
-                    newObject[newKey] = RemoveSpecialCharacters((JObject)property.Value);
-                }
-                else if (property.Value is JArray)
-                {
-                    // Обрабатываем массивы
-                    JArray newArray = new JArray();
-                    foreach (var item in (JArray)property.Value)
-                    {
-                        if (item is JObject)
-                        {
-                            newArray.Add(RemoveSpecialCharacters((JObject)item));
-                        }
-                        else
-                        {
-                            newArray.Add(item);
-                        }
-                    }
-                    newObject[newKey] = newArray;
-                }
-                else
-                {
-                    // Обычные значения
-                    newObject[newKey] = property.Value;
-                }
-            }
-
-            return newObject;
-        }
-
-        private string ConvertXMlToSJson(string xmlSource)
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xmlSource);
-
-            string jsonString = JsonConvert.SerializeXmlNode(doc, Newtonsoft.Json.Formatting.None, false);
-
-            // Парсинг JSON строки в JObject
-            JObject jsonObject = JObject.Parse(jsonString);
-
-            // Рекурсивно переименуем ключи, убрав '@' и ':'
-            //JObject processedObject = RemoveSpecialCharacters(jsonObject);
-            JObject processedObject = jsonObject as JObject;
-
-            // Вывод отредактированного JSON
-            string processedJson = processedObject.ToString(Newtonsoft.Json.Formatting.Indented);
-
-            return processedJson;
-        }
 
         private void executeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -280,28 +337,24 @@ namespace LiquidMapTestApp
             {
                 var templateText = textBoxTemplate.Text;
 
-                var rootElement = comboBox2.Text;
+                var rootElement = comboBoxRootElement.Text;
+
+                bool useRubyNamingConvention = !checkBoxCSharpNaming.Checked;
 
                 var content = contentValue;
 
-                var t1 = DateTime.Now;
-
-                var template = _transformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
-
-                if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    var message = $"Message: {errorMessage}\n\n";
-
-                    DisplayText(textBoxResult, "Transformer errors: \n\n" + message);
-                    return;
-                }
-
                 if (cmbSourceType.SelectedIndex == (int)SourceFormat.Xml)
                 {
-                    content = ConvertXMlToSJson(contentValue);
+                    content = JsonHelper.ConvertXMlToSJson(contentValue, removeSpecialCharacters: false);
                 }
 
-                var result3 = _transformationService.TransformJsonToText(null, template, content, rootElement, out errorMessage);
+                ILiquidTransformationService _transformationService = cmbEngineType.SelectedIndex == (int)EngineType.DotLiquid
+                    ? _dotLiquidTransformationService as ILiquidTransformationService
+                    : _fluidTransformationService as ILiquidTransformationService;
+
+                var t1 = DateTime.Now;
+
+                var result3 = _transformationService.Transform(templateText, content, rootElement, useRubyNamingConvention, out var errorMessage);
 
                 var t2 = DateTime.Now;
 
@@ -317,35 +370,26 @@ namespace LiquidMapTestApp
                 //    {
                 //        message += $"Message: {error.Message}\nInnerException: {error.InnerException?.Message}\n\n";
                 //    }
-
-                //    DisplayText(textBoxResult, "Transformer errors: \n\n" + message);
-                //}
-                //else
-                //{
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    DisplayText(textBoxResult, "Transformer errors: \n\n" + errorMessage);
+                }
+                else
+                {
                     DisplayResult(result3);
-                //}
+                }
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
                 DisplayText(textBoxResult, "ERROR: " + exception.Message);
             }
-
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            checkBoxCSharpNaming.Checked = true;
-            tabControlResult.TabPages.Remove(tabPageResultJson);
-            tabControlResult.TabPages.Remove(tabPageResultHTML);
-            cmbResultType.SelectedIndex = (int)OutputFormat.Json;
-            cmbSourceType.SelectedIndex = (int)OutputFormat.Json;
-            
-        }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            outputFormat = (OutputFormat) cmbResultType.SelectedIndex;
+            outputFormat = (OutputFormat)cmbResultType.SelectedIndex;
 
             checkBoxAutoFormatJsonResult.Visible = outputFormat == OutputFormat.Json;
             buttonFormatJsonResult.Visible = outputFormat == OutputFormat.Json;
@@ -375,11 +419,18 @@ namespace LiquidMapTestApp
 
         private void checkBoxCSharpNaming_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxCSharpNaming.Checked)
+            // MANDATORY - focuses a label before highlighting (avoids blinking)
+            labelTitle.Focus();
+
+            if (_syntaxHighlighter != null)
             {
-                comboBox2.SelectedIndex = 0;
+                _syntaxHighlighter.DisableHighlighting = disableHighlighting;
+                InitLiquidSyntaxHighlighter();
+                _syntaxHighlighter.HighlightSyntax();
             }
-            richTextBox1_TextChanged(checkBoxCSharpNaming, new EventArgs());
+
+            // giving back the focus
+            textBoxTemplate.Focus();
         }
 
         private void saveToolStripButton_Click(object sender, EventArgs e)
@@ -501,94 +552,94 @@ namespace LiquidMapTestApp
 
         private void loadTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var templateText = textBoxTemplate.Text;
+            //var templateText = textBoxTemplate.Text;
 
-            var rootElement = comboBox2.Text;
+            //var rootElement = comboBox2.Text;
 
-            var results = new List<string>();
-            Stopwatch stopwatch0 = Stopwatch.StartNew();
-            Stopwatch stopwatch = Stopwatch.StartNew();
+            //var results = new List<string>();
+            //Stopwatch stopwatch0 = Stopwatch.StartNew();
+            //Stopwatch stopwatch = Stopwatch.StartNew();
 
-            var template = _transformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
+            //var template = _transformationService.ParseTemplate(null, templateText, !checkBoxCSharpNaming.Checked, out var errorMessage);
 
-            int count = 10000;
-            //toolStripProgressBar1.Maximum = (int)(count / 100);
-            //toolStripProgressBar1.Visible = true;
+            //int count = 10000;
+            ////toolStripProgressBar1.Maximum = (int)(count / 100);
+            ////toolStripProgressBar1.Visible = true;
 
-            //toolStripProgressBar1.Value = 0;
-            int[] items = new int[count];
+            ////toolStripProgressBar1.Value = 0;
+            //int[] items = new int[count];
 
-            #region case1
-            int i = 0;
-            foreach (var item in items)
-            {
-                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
-                i++;
-                if (i % 100 == 0)
-                {
-                    //toolStripProgressBar1.Value++;
-                }
+            //#region case1
+            //int i = 0;
+            //foreach (var item in items)
+            //{
+            //    var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+            //    i++;
+            //    if (i % 100 == 0)
+            //    {
+            //        //toolStripProgressBar1.Value++;
+            //    }
 
-            }
-            stopwatch.Stop();
-            results.Add($"forech: {stopwatch.Elapsed.TotalSeconds} secs");
-            #endregion
+            //}
+            //stopwatch.Stop();
+            //results.Add($"forech: {stopwatch.Elapsed.TotalSeconds} secs");
+            //#endregion
 
-            #region case2
-            stopwatch.Restart();
-            //toolStripProgressBar1.Value = 0;
-            items.AsParallel().ForAll(item =>
-            {
-                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
-            }
-            );
+            //#region case2
+            //stopwatch.Restart();
+            ////toolStripProgressBar1.Value = 0;
+            //items.AsParallel().ForAll(item =>
+            //{
+            //    var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+            //}
+            //);
 
-            stopwatch.Stop();
-            results.Add($"AsParallel().ForAll: {stopwatch.Elapsed.TotalSeconds} secs");
-            #endregion
+            //stopwatch.Stop();
+            //results.Add($"AsParallel().ForAll: {stopwatch.Elapsed.TotalSeconds} secs");
+            //#endregion
 
-            #region case3
-            stopwatch.Restart();
-            Parallel.ForEach(items, item =>
-            {
-                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
-            }
-            );
+            //#region case3
+            //stopwatch.Restart();
+            //Parallel.ForEach(items, item =>
+            //{
+            //    var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+            //}
+            //);
 
-            stopwatch.Stop();
-            results.Add($"Parallel.ForEach: {stopwatch.Elapsed.TotalSeconds} secs");
+            //stopwatch.Stop();
+            //results.Add($"Parallel.ForEach: {stopwatch.Elapsed.TotalSeconds} secs");
 
-            stopwatch.Restart();
-            Parallel.ForEach(items, item =>
-            {
-                var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
-            }
-            );
+            //stopwatch.Restart();
+            //Parallel.ForEach(items, item =>
+            //{
+            //    var result3 = _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage);
+            //}
+            //);
 
-            stopwatch.Stop();
-            results.Add($"Parallel.ForEach: {stopwatch.Elapsed.TotalSeconds} secs");
-            #endregion
+            //stopwatch.Stop();
+            //results.Add($"Parallel.ForEach: {stopwatch.Elapsed.TotalSeconds} secs");
+            //#endregion
 
-            #region case4
-            stopwatch.Restart();
-            var taskList = new List<Task>();
-            foreach (var item in items)
-            {
-                var itemTodo = item;
-                taskList.Add(Task.Run(() => _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage)));
-            }
-            Task.WaitAll(taskList.ToArray());
+            //#region case4
+            //stopwatch.Restart();
+            //var taskList = new List<Task>();
+            //foreach (var item in items)
+            //{
+            //    var itemTodo = item;
+            //    taskList.Add(Task.Run(() => _transformationService.TransformJsonToText(null, template, contentValue, rootElement, out errorMessage)));
+            //}
+            //Task.WaitAll(taskList.ToArray());
 
-            stopwatch.Stop();
-            results.Add($"Task.WaitAll: {stopwatch.Elapsed.TotalSeconds} secs");
-            #endregion
+            //stopwatch.Stop();
+            //results.Add($"Task.WaitAll: {stopwatch.Elapsed.TotalSeconds} secs");
+            //#endregion
 
-            stopwatch0.Stop();
-            results.Add($"total: {stopwatch0.Elapsed.TotalSeconds} secs");
+            //stopwatch0.Stop();
+            //results.Add($"total: {stopwatch0.Elapsed.TotalSeconds} secs");
 
-            //toolStripProgressBar1.Visible = false;
-            toolStripStatusLabel1.Text = $"Actual time for {count} iterations: " + 
-                String.Join(";", results);
+            ////toolStripProgressBar1.Visible = false;
+            //toolStripStatusLabel1.Text = $"Actual time for {count} iterations: " + 
+            //    String.Join(";", results);
         }
 
         private void refreshToolStripButton_Click(object sender, EventArgs e)
@@ -597,6 +648,151 @@ namespace LiquidMapTestApp
             {
                 RefreshTemplate();
             }
+        }
+
+        private void dataTreeView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            DoDragDrop(e.Item.ToString(), DragDropEffects.Copy);
+        }
+
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            string selectedNodePath = GetDataTreeViewSelectedNodePath();
+
+            Clipboard.SetText(selectedNodePath);
+        }
+
+        private string GetDataTreeViewSelectedNodePath(int level = 0)
+        {
+            string selectedNodePath = GetTreeViewNodeFullPath(dataTreeView.SelectedNode);
+
+            if (!string.IsNullOrEmpty(comboBoxRootElement.Text))
+            {
+                selectedNodePath = selectedNodePath.Replace("ROOT", comboBoxRootElement.Text);
+            }
+
+            return selectedNodePath;
+        }
+
+        private string GetTreeViewNodeFullPath(TreeNode treeNode)
+        {
+            string selectedNodePath = treeNode.FullPath;
+
+            selectedNodePath = selectedNodePath
+                .Replace("\\", ".")
+                .Replace(" <Object>", "")
+                .Replace(" <Array>", "")
+                .Split([':']).First()?.Trim();
+
+            return selectedNodePath;
+        }
+
+        private string GetDataTreeViewSelectedNodeValue()
+        {
+            return dataTreeView.SelectedNode.Text
+                .Split([':']).LastOrDefault();
+        }
+
+        private void dataTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                dataTreeView.SelectedNode = e.Node;
+                contextMenuStrip1.Show(Cursor.Position);
+            }
+
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            int i;
+            string s;
+
+            var textBox = textBoxTemplate;
+
+            try
+            {
+                // MANDATORY - focuses a label before highlighting (avoids blinking)
+                labelTitle.Focus();
+
+                // Get start position to drop the text.  
+                i = textBox.SelectionStart;
+                s = textBox.Text.Substring(i);
+
+                // Drop the text on to the RichTextBox.  
+                var text = textBox.Text.Substring(0, i);
+                text = text +
+                   Clipboard.GetText() + s;
+                textBox.Text = text;
+            }
+            finally
+            {
+                // giving back the focus
+                textBox.Focus();
+            }
+        }
+
+        private void toolStripMenuItem5_CheckedChanged(object sender, EventArgs e)
+        {
+            disableHighlighting = !toolStripMenuItem5.Checked;
+
+            // MANDATORY - focuses a label before highlighting (avoids blinking)
+            labelTitle.Focus();
+
+            if (_syntaxHighlighter != null)
+            {
+                _syntaxHighlighter.DisableHighlighting = disableHighlighting;
+                _syntaxHighlighter.HighlightSyntax();
+            }
+            else
+            {
+                var text = textBoxTemplate.Text;
+                textBoxTemplate.ResetText();
+                textBoxTemplate.Text = text;
+            }
+
+            // giving back the focus
+            textBoxTemplate.Focus();
+
+
+        }
+
+        private void toolStripMenuItem7_Click(object sender, EventArgs e)
+        {
+            string selectedNodePath = GetDataTreeViewSelectedNodePath();
+
+            Clipboard.SetText("{{" + selectedNodePath + "}}");
+
+        }
+
+        private void toolStripMenuItem8_Click(object sender, EventArgs e)
+        {
+            string selectedValue = GetDataTreeViewSelectedNodeValue();
+
+            Clipboard.SetText(selectedValue);
+
+        }
+
+        private void toolStripMenuItem10_Click(object sender, EventArgs e)
+        {
+            string value = @"{% if %}
+{% else %}
+{% endif %}";
+
+            Clipboard.SetText(value);
+        }
+
+        private void toolStripMenuItem11_Click(object sender, EventArgs e)
+        {
+            string value = @"[
+{% for item in items %}
+{
+}{% if forloop.last == false %},{% endif %}
+{% endfor %}
+]";
+
+            Clipboard.SetText(value);
+
         }
     }
 }

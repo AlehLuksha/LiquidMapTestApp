@@ -1,4 +1,6 @@
-﻿namespace LiquidMapTestApp
+﻿using System.Linq;
+
+namespace LiquidMapTestApp
 {
     public class LiquidSyntax
     {
@@ -35,6 +37,25 @@
             // my custom filters
             "format", "where_is_null", "null_if_empty", "null_if_empty_else_string"
         };
+
+        public static string ConvertToCSharpName(string s, bool isFirstLetterUpper = true)
+        {
+            var parts = s.Split(new char[] { '_' }).Select(x => UpperFirstLetter(x));
+            var result = string.Join("", parts);
+
+            return isFirstLetterUpper ? UpperFirstLetter(result) : LowerFirstLetter(result);
+        }
+
+        private static string UpperFirstLetter(string word)
+        {
+            return char.ToUpperInvariant(word[0]) + word.Substring(1);
+        }
+
+        private static string LowerFirstLetter(string word)
+        {
+            return char.ToLowerInvariant(word[0]) + word.Substring(1);
+        }
+
 
     }
 }

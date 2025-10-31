@@ -15,4 +15,10 @@
         Xml = 1
 
     }
+
+    internal enum EngineType
+    {
+        DotLiquid = 0,
+        Fluent = 1,
+    }
 }

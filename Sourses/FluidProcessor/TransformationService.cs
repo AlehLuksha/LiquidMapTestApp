@@ -5,14 +5,30 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Fluid;
+using FluidProcessor.Liquid.LiquidRegistrations;
 using LiquidProcessor.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FluidProcessor
 {
-    public class TransformationService : ITransformationService<IFluidTemplate>
+    public class TransformationService : ITransformationService<IFluidTemplate>, ILiquidTransformationService
     {
+        public string Transform(string templateString, string jsonData, string rootElement, bool useRubyNamingConvention, out string errorMessage)
+        {
+            var template = ParseTemplate(null, templateString, false, out errorMessage);
+
+            if (template != null && string.IsNullOrEmpty(errorMessage)) 
+            {
+                return TransformJsonToText(null, template, jsonData, rootElement, out errorMessage);
+            }
+            else
+            {
+                return "Error";
+            }
+
+        }
+
         public IFluidTemplate ParseTemplate(ILogger log, string liquidTemplate, bool useRubyNamingConvention, out string errorMessage)
         {
             if (string.IsNullOrEmpty(liquidTemplate))
@@ -21,22 +37,23 @@ namespace FluidProcessor
                 return null;
             }
 
-            if (!useRubyNamingConvention)
-            {
-                //FluidParser.NamingConvention = new NamingConventions.CSharpNamingConvention();
-            }
-
             // register custom filters
-            //
+            TimeZoneCastFilterRegistration.RegisterCustomizations(TemplateOptions.Default);
+
+            var parser = new FluidParser();
+            // register custom tags
+            AddRootContentTagRegistration.RegisterCustomizations(parser);
+            GenerateUniqueIdTagRegistration.RegisterCustomizations(parser);
 
             try
             {
                 // parse template
-                var parser = new FluidParser();
-                var template = parser.Parse(liquidTemplate);
-                errorMessage = null;
-
-                return template;
+                if (parser.TryParse(liquidTemplate, out var template, out errorMessage))
+                {
+                    return template;
+                }
+                else
+                    return null;
             }
             catch (Exception ex)
             {
@@ -61,8 +78,13 @@ namespace FluidProcessor
 
             try
             {
+                var modifiedData = jsonData;
+
                 // Wrap the JSON input in another content node to provide compatibility with Logic Apps Liquid transformations
-                var modifiedData = "{" + rootElement + ":" + jsonData + "}";
+                if (!string.IsNullOrEmpty(rootElement))
+                {
+                    modifiedData = "{" + rootElement + ":" + jsonData + "}";
+                }
 
                 dynamic jObj = JsonConvert.DeserializeObject(modifiedData);
                 var context = new TemplateContext(jObj);

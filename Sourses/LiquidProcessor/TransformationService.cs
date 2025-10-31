@@ -9,8 +9,23 @@ using Newtonsoft.Json.Serialization;
 namespace DotLiquidProcessor
 {
     /// <summary>The service to transform Json to Text\Json using liquid templates</summary>
-    public class TransformationService: ITransformationService<Template>
+    public class TransformationService: ITransformationService<Template>, ILiquidTransformationService
     {
+        public string Transform(string templateString, string jsonData, string rootElement, bool useRubyNamingConvention,  out string errorMessage)
+        {
+            var template = ParseTemplate(null, templateString, false, out errorMessage);
+
+            if (template != null && string.IsNullOrEmpty(errorMessage))
+            {
+                return TransformJsonToText(null, template, jsonData, rootElement, out errorMessage);
+            }
+            else
+            {
+                return "Error";
+            }
+
+        }
+
         /// <summary>Parses the liquid template.</summary>
         /// <param name="log">The log.</param>
         /// <param name="liquidTemplate">The liquid template.</param>
