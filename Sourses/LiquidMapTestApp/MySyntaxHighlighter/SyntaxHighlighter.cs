@@ -76,8 +76,8 @@ namespace LiquidMapTestApp.MySyntaxHighlighter
 
             _typesRegex = @"\b(Console)\b";
 
-            //string comments = @"(\/\/.+?$|\/\*.+?\*\/)";
-            _commentsRegex = @"{% comment %}(.|[\r\n])*?{% endcomment %}";
+            //_commentsRegex = @"{% comment %}(.|[\r\n])*?{% endcomment %}";
+            _commentsRegex = @"{%-?\s*comment\s*-?%}[\s\S]*?{%-?\s*endcomment\s*-?%}";
 
             _stringsRegEx = "(\".+?\"|'.+?')";
 

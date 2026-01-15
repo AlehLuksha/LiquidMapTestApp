@@ -150,8 +150,10 @@ namespace LiquidMapTestApp
 
         private void InitLiquidSyntaxHighlighter()
         {
-            bool isCSharpNamingConvention = checkBoxCSharpNaming.Checked;
-            bool isFirstLetterUpper = cmbEngineType.SelectedIndex == (int)EngineType.DotLiquid;
+            bool isDotLiquidEngine = cmbEngineType.SelectedIndex == (int)EngineType.DotLiquid;
+
+            bool isCSharpNamingConvention = isDotLiquidEngine && checkBoxCSharpNaming.Checked;
+            bool isFirstLetterUpper = isDotLiquidEngine;
 
             //var syntaxHighlighter = new SyntaxHighlighter(textBoxTemplate);
             //ApplyLiquidPatterns(syntaxHighlighter, isCSharpNamingConvention, isFirstLetterUpper);
