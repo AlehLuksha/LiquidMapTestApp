@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("aleh.luksha@hotmail.com")]
 [assembly: AssemblyProduct("Liquid Template Tester")]
-[assembly: AssemblyCopyright("Copyright © Aleh Luksha 2019-2025")]
+[assembly: AssemblyCopyright("Copyright © Aleh Luksha 2019-2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
