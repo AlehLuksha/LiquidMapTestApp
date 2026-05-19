@@ -90,7 +90,7 @@ namespace LiquidMapTestApp
             InitLiquidSyntaxHighlighter();
 
             checkBoxCSharpNaming.Checked = true;
-            comboBoxRootElement.SelectedIndex = 0;
+            comboBoxRootElement.SelectedIndex = -1;
 
             cmbSourceType.SelectedIndex = (int)SourceFormat.Json;
             cmbResultType.SelectedIndex = (int)OutputFormat.Json;
@@ -184,13 +184,25 @@ namespace LiquidMapTestApp
                     content = JsonHelper.ConvertXMlToSJson(contentValue, removeSpecialCharacters: false);
                 }
 
-                dynamic data = JsonConvert.DeserializeObject(content);
-                ObjectToTreeView.SetObjectAsJson(dataTreeView, data);
+                RefreshDataTree(content);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 DisplayText(textBoxResult, "Input data errors: \n\n" + e.Message);
+            }
+        }
+
+        private void RefreshDataTree(string content)
+        {
+            try
+            {
+                dynamic data = JsonConvert.DeserializeObject(content);
+                ObjectToTreeView.SetObjectAsJson(dataTreeView, data);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Refresh Json tree error: {ex.Message}", "Error", MessageBoxButtons.OK);
             }
         }
 
@@ -795,6 +807,11 @@ namespace LiquidMapTestApp
 
             Clipboard.SetText(value);
 
+        }
+
+        private void refreshTreeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RefreshDataTree(contentValue);
         }
     }
 }
