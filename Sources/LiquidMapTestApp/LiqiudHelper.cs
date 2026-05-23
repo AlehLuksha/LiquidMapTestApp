@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+using System;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -10,43 +11,78 @@ namespace LiquidMapTestApp
         private static Font _keywordFont;
         private static Font _commentsFont;
 
+        // Cached compiled regex patterns to avoid recompilation on every highlight call
+        private static Regex _keywordRegex;
+        private static Regex _filterRegexRubyNaming;
+        private static Regex _filterRegexCSharpNaming;
+        private static Regex _customFilterRegexRubyNaming;
+        private static Regex _customFilterRegexCSharpNaming;
+        private static Regex _typeRegex;
+        private static Regex _commentRegex;
+        private static Regex _stringRegex;
+
         public static void Init(RichTextBox codeRichTextBox)
         {
             _keywordFont = new Font(codeRichTextBox.Font.Name, codeRichTextBox.Font.Size, FontStyle.Bold);
             _commentsFont = new Font(codeRichTextBox.Font.Name, codeRichTextBox.Font.Size, FontStyle.Italic);
+
+            // Initialize cached regex patterns
+            InitializeRegexPatterns();
+        }
+
+        private static void InitializeRegexPatterns()
+        {
+            if (_keywordRegex != null)
+                return; // Already initialized
+
+            // Keywords pattern - compile once
+            string keywordsPattern = $@"\b({string.Join("|", LiquidSyntax.Keywords)})\b";
+            _keywordRegex = new Regex(keywordsPattern, RegexOptions.Compiled);
+
+            // Filters patterns - compile once for both naming conventions
+            string filtersPatternRuby = $@"\b({string.Join("|", LiquidSyntax.Filters)})\b";
+            _filterRegexRubyNaming = new Regex(filtersPatternRuby, RegexOptions.Compiled);
+
+            string filtersPatternCSharp = $@"\b({string.Join("|", LiquidSyntax.Filters.Select(x => ConvertToCSharpName(x)))})\b";
+            _filterRegexCSharpNaming = new Regex(filtersPatternCSharp, RegexOptions.Compiled);
+
+            // Custom filters patterns - compile once for both naming conventions
+            string customFiltersPatternRuby = $@"\b({string.Join("|", LiquidSyntax.CustomFilters)})\b";
+            _customFilterRegexRubyNaming = new Regex(customFiltersPatternRuby, RegexOptions.Compiled);
+
+            string customFiltersPatternCSharp = $@"\b({string.Join("|", LiquidSyntax.CustomFilters.Select(x => ConvertToCSharpName(x)))})\b";
+            _customFilterRegexCSharpNaming = new Regex(customFiltersPatternCSharp, RegexOptions.Compiled);
+
+            // Types pattern
+            _typeRegex = new Regex(@"\b(Console)\b", RegexOptions.Compiled);
+
+            // Comments pattern
+            _commentRegex = new Regex(@"{% comment %}(.|[\r\n])*?{% endcomment %}", RegexOptions.Compiled | RegexOptions.Multiline);
+
+            // Strings pattern
+            _stringRegex = new Regex("(\".+?\"|'.+?')", RegexOptions.Compiled);
         }
 
         public static void HighlightLiquidSyntax(RichTextBox codeRichTextBox, bool isCSharpNamingConvention)
         {
-            // getting keywords/functions
-            string keywords = $@"\b({string.Join("|", LiquidSyntax.Keywords)})\b";
-            MatchCollection keywordMatches = Regex.Matches(codeRichTextBox.Text, keywords);
+            // Ensure regex patterns are initialized
+            InitializeRegexPatterns();
 
-            // getting filters
-            string filters = $@"\b({string.Join("|", isCSharpNamingConvention 
-                ? LiquidSyntax.Filters.ToList().Select(x => ConvertToCSharpName(x)) 
-                : LiquidSyntax.Filters)})\b";
-            MatchCollection filterMatches = Regex.Matches(codeRichTextBox.Text, filters);
+            string text = codeRichTextBox.Text;
 
-            // getting custom filters
-            string customFilters = $@"\b({string.Join("|", isCSharpNamingConvention
-                ? LiquidSyntax.CustomFilters.ToList().Select(x => ConvertToCSharpName(x))
-                : LiquidSyntax.CustomFilters)})\b";
-            MatchCollection customFilterMatches = Regex.Matches(codeRichTextBox.Text, customFilters);
+            // Use cached regex patterns instead of recompiling them
+            MatchCollection keywordMatches = _keywordRegex.Matches(text);
+            MatchCollection filterMatches = isCSharpNamingConvention
+                ? _filterRegexCSharpNaming.Matches(text)
+                : _filterRegexRubyNaming.Matches(text);
 
+            MatchCollection customFilterMatches = isCSharpNamingConvention
+                ? _customFilterRegexCSharpNaming.Matches(text)
+                : _customFilterRegexRubyNaming.Matches(text);
 
-            // getting types/classes from the text 
-            string types = @"\b(Console)\b";
-            MatchCollection typeMatches = Regex.Matches(codeRichTextBox.Text, types);
-
-            // getting comments (multiline)
-            //string comments = @"(\/\/.+?$|\/\*.+?\*\/)";
-            string comments = @"{% comment %}(.|[\r\n])*?{% endcomment %}";
-            MatchCollection commentMatches = Regex.Matches(codeRichTextBox.Text, comments, RegexOptions.Multiline);
-
-            // getting strings
-            string strings = "(\".+?\"|'.+?')";
-            MatchCollection stringMatches = Regex.Matches(codeRichTextBox.Text, strings);
+            MatchCollection typeMatches = _typeRegex.Matches(text);
+            MatchCollection commentMatches = _commentRegex.Matches(text);
+            MatchCollection stringMatches = _stringRegex.Matches(text);
 
             // saving the original caret position + forecolor
             int originalIndex = codeRichTextBox.SelectionStart;
@@ -108,19 +144,28 @@ namespace LiquidMapTestApp
             codeRichTextBox.SelectionStart = originalIndex;
             codeRichTextBox.SelectionLength = originalLength;
             codeRichTextBox.SelectionColor = originalColor;
-
         }
 
         private static string ConvertToCSharpName(string s)
         {
-            var parts = s.Split(new char[] {'_'}).Select(x => UpperFirstLetter(x));
+            var parts = s.Split(new char[] { '_' }).Select(x => UpperFirstLetter(x));
             return string.Join("", parts);
         }
 
+        /// <summary>
+        /// Converts the first character of a word to uppercase.
+        /// Uses string.Concat with AsSpan to minimize allocations.
+        /// </summary>
         private static string UpperFirstLetter(string word)
         {
-            return char.ToUpperInvariant(word[0]) + word.Substring(1);
-        }
+            if (string.IsNullOrEmpty(word))
+                return word;
 
+            if (word.Length == 1)
+                return word.ToUpperInvariant();
+
+            // Optimal approach: use string.Concat with AsSpan to avoid Substring allocation
+            return string.Concat(char.ToUpperInvariant(word[0]), word.AsSpan(1));
+        }
     }
 }
