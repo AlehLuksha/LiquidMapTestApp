@@ -15,13 +15,20 @@ namespace LiquidMapTestApp.MySyntaxHighlighter
 
         private RichTextBox _richTextBox;
 
-        private string _keywordsRegex;
-        private string _filtersRegex;
-        private string _customFiltersRegex;
-        private string _typesRegex;
-        private string _commentsRegex;
-        private string _stringsRegEx;
-        private string _templatesRegEx;
+        private static Regex _keywordsRegex;
+        private static Regex _filtersRegexRubyNaming;
+        private static Regex _filtersRegexCSharpUpperNaming;
+        private static Regex _filtersRegexCSharpLowerNaming;
+        private static Regex _customFiltersRegexRubyNaming;
+        private static Regex _customFiltersRegexCSharpUpperNaming;
+        private static Regex _customFiltersRegexCSharpLowerNaming;
+        private static Regex _typesRegex;
+        private static Regex _commentsRegex;
+        private static Regex _stringsRegEx;
+        private static Regex _templatesRegEx;
+
+        private Regex _activeFiltersRegex;
+        private Regex _activeCustomFiltersRegex;
 
         /// <summary>
         /// Determines whether the program is busy creating rtf for the previous
@@ -64,29 +71,26 @@ namespace LiquidMapTestApp.MySyntaxHighlighter
 
         public void InitSyntax(bool isCSharpNamingConvention, bool isFirstLetterUpper)
         {
-            _keywordsRegex = $@"\b({string.Join("|", LiquidSyntax.Keywords)})\b";
+            InitializeRegexPatterns();
 
-            _filtersRegex = $@"\b({string.Join("|", isCSharpNamingConvention
-                ? LiquidSyntax.Filters.ToList().Select(x => LiquidSyntax.ConvertToCSharpName(x,isFirstLetterUpper))
-                : LiquidSyntax.Filters)})\b";
+            _activeFiltersRegex = isCSharpNamingConvention
+                ? (isFirstLetterUpper ? _filtersRegexCSharpUpperNaming : _filtersRegexCSharpLowerNaming)
+                : _filtersRegexRubyNaming;
 
-            _customFiltersRegex = $@"\b({string.Join("|", isCSharpNamingConvention
-                ? LiquidSyntax.CustomFilters.ToList().Select(x => LiquidSyntax.ConvertToCSharpName(x, isFirstLetterUpper))
-                : LiquidSyntax.CustomFilters)})\b";
-
-            _typesRegex = @"\b(Console)\b";
-
-            //_commentsRegex = @"{% comment %}(.|[\r\n])*?{% endcomment %}";
-            _commentsRegex = @"{%-?\s*comment\s*-?%}[\s\S]*?{%-?\s*endcomment\s*-?%}";
-
-            _stringsRegEx = "(\".+?\"|'.+?')";
-
-            _templatesRegEx = @"{{.+?}}";
-
+            _activeCustomFiltersRegex = isCSharpNamingConvention
+                ? (isFirstLetterUpper ? _customFiltersRegexCSharpUpperNaming : _customFiltersRegexCSharpLowerNaming)
+                : _customFiltersRegexRubyNaming;
         }
 
         public void HighlightSyntax()
         {
+            if (_activeFiltersRegex == null || _activeCustomFiltersRegex == null)
+            {
+                InitSyntax(false, true);
+            }
+
+            string text = _richTextBox.Text;
+
             // saving the original caret position + forecolor
             int originalIndex = _richTextBox.SelectionStart;
             int originalLength = _richTextBox.SelectionLength;
@@ -109,28 +113,28 @@ namespace LiquidMapTestApp.MySyntaxHighlighter
                 }
 
                 // getting keywords/functions
-                MatchCollection keywordMatches = Regex.Matches(_richTextBox.Text, _keywordsRegex);
+                MatchCollection keywordMatches = _keywordsRegex.Matches(text);
 
                 // getting filters
-                MatchCollection filterMatches = Regex.Matches(_richTextBox.Text, _filtersRegex);
+                MatchCollection filterMatches = _activeFiltersRegex.Matches(text);
 
                 // getting custom filters
-                MatchCollection customFilterMatches = Regex.Matches(_richTextBox.Text, _customFiltersRegex);
+                MatchCollection customFilterMatches = _activeCustomFiltersRegex.Matches(text);
 
                 // getting types/classes from the text 
-                MatchCollection typeMatches = Regex.Matches(_richTextBox.Text, _typesRegex);
+                MatchCollection typeMatches = _typesRegex.Matches(text);
 
                 // getting comments (multiline)
-                MatchCollection commentMatches = Regex.Matches(_richTextBox.Text, _commentsRegex, RegexOptions.Multiline);
+                MatchCollection commentMatches = _commentsRegex.Matches(text);
 
                 // getting strings
-                MatchCollection stringMatches = Regex.Matches(_richTextBox.Text, _stringsRegEx);
+                MatchCollection stringMatches = _stringsRegEx.Matches(text);
 
                 // getting templates
-                MatchCollection templatesMatches = Regex.Matches(_richTextBox.Text, _templatesRegEx);
+                MatchCollection templatesMatches = _templatesRegEx.Matches(text);
 
                 // scanning...
-                foreach (Match m in keywordMatches?.OrderBy(x=>x.Index))
+                foreach (Match m in keywordMatches)
                 {
                     _richTextBox.SelectionStart = m.Index;
                     _richTextBox.SelectionLength = m.Length;
@@ -138,14 +142,14 @@ namespace LiquidMapTestApp.MySyntaxHighlighter
                     _richTextBox.SelectionFont = _boldFont;
                 }
 
-                foreach (Match m in typeMatches?.OrderBy(x => x.Index))
+                foreach (Match m in typeMatches)
                 {
                     _richTextBox.SelectionStart = m.Index;
                     _richTextBox.SelectionLength = m.Length;
                     _richTextBox.SelectionColor = Color.DarkCyan;
                 }
 
-                foreach (Match m in commentMatches?.OrderBy(x => x.Index))
+                foreach (Match m in commentMatches)
                 {
                     _richTextBox.SelectionStart = m.Index;
                     _richTextBox.SelectionLength = m.Length;
@@ -153,14 +157,14 @@ namespace LiquidMapTestApp.MySyntaxHighlighter
                     _richTextBox.SelectionFont = _italicFont;
                 }
 
-                foreach (Match m in stringMatches?.OrderBy(x => x.Index))
+                foreach (Match m in stringMatches)
                 {
                     _richTextBox.SelectionStart = m.Index;
                     _richTextBox.SelectionLength = m.Length;
                     _richTextBox.SelectionColor = Color.Brown;
                 }
 
-                foreach (Match m in filterMatches?.OrderBy(x => x.Index))
+                foreach (Match m in filterMatches)
                 {
                     _richTextBox.SelectionStart = m.Index;
                     _richTextBox.SelectionLength = m.Length;
@@ -168,7 +172,7 @@ namespace LiquidMapTestApp.MySyntaxHighlighter
                     _richTextBox.SelectionFont = _boldFont;
                 }
 
-                foreach (Match m in customFilterMatches?.OrderBy(x => x.Index))
+                foreach (Match m in customFilterMatches)
                 {
                     _richTextBox.SelectionStart = m.Index;
                     _richTextBox.SelectionLength = m.Length;
@@ -176,7 +180,7 @@ namespace LiquidMapTestApp.MySyntaxHighlighter
                     _richTextBox.SelectionFont = _boldFont;
                 }
 
-                foreach (Match m in templatesMatches?.OrderBy(x => x.Index))
+                foreach (Match m in templatesMatches)
                 {
                     _richTextBox.SelectionStart = m.Index;
                     _richTextBox.SelectionLength = m.Length;
@@ -194,6 +198,35 @@ namespace LiquidMapTestApp.MySyntaxHighlighter
 
                 _isDuringHighlight = false;
             }
+        }
+
+        private static void InitializeRegexPatterns()
+        {
+            if (_keywordsRegex != null)
+                return;
+
+            _keywordsRegex = new Regex($@"\b({string.Join("|", LiquidSyntax.Keywords)})\b", RegexOptions.Compiled);
+
+            _filtersRegexRubyNaming = new Regex($@"\b({string.Join("|", LiquidSyntax.Filters)})\b", RegexOptions.Compiled);
+            _filtersRegexCSharpUpperNaming = new Regex(
+                $@"\b({string.Join("|", LiquidSyntax.Filters.Select(x => LiquidSyntax.ConvertToCSharpName(x, true)))})\b",
+                RegexOptions.Compiled);
+            _filtersRegexCSharpLowerNaming = new Regex(
+                $@"\b({string.Join("|", LiquidSyntax.Filters.Select(x => LiquidSyntax.ConvertToCSharpName(x, false)))})\b",
+                RegexOptions.Compiled);
+
+            _customFiltersRegexRubyNaming = new Regex($@"\b({string.Join("|", LiquidSyntax.CustomFilters)})\b", RegexOptions.Compiled);
+            _customFiltersRegexCSharpUpperNaming = new Regex(
+                $@"\b({string.Join("|", LiquidSyntax.CustomFilters.Select(x => LiquidSyntax.ConvertToCSharpName(x, true)))})\b",
+                RegexOptions.Compiled);
+            _customFiltersRegexCSharpLowerNaming = new Regex(
+                $@"\b({string.Join("|", LiquidSyntax.CustomFilters.Select(x => LiquidSyntax.ConvertToCSharpName(x, false)))})\b",
+                RegexOptions.Compiled);
+
+            _typesRegex = new Regex(@"\b(Console)\b", RegexOptions.Compiled);
+            _commentsRegex = new Regex(@"{%-?\s*comment\s*-?%}[\s\S]*?{%-?\s*endcomment\s*-?%}", RegexOptions.Compiled);
+            _stringsRegEx = new Regex("(\".+?\"|'.+?')", RegexOptions.Compiled);
+            _templatesRegEx = new Regex(@"{{.+?}}", RegexOptions.Compiled);
         }
     }
 }

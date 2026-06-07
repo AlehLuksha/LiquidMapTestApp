@@ -23,9 +23,12 @@ namespace LiquidMapTestApp
         private static int FontSize = 9;
         private readonly Font EditorDefaultFont = new Font(FontName, FontSize);
 
+        // Cached compiled regex pattern for removing empty lines - avoids recompilation on every call
+        private static readonly Regex _emptyLinesRegex = 
+            new Regex(@"^\s+$[\r\n]*", RegexOptions.Multiline | RegexOptions.Compiled);
+
         private string dataFileName;
         private string templateFileName;
-
         private string TemplateFileName
         {
             get => this.templateFileName;
@@ -216,8 +219,8 @@ namespace LiquidMapTestApp
         {
             if (chbxRemoveEmptyString.Checked)
             {
-                var resultString = Regex.Replace(text, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline);
-                text = resultString;
+                // Use cached compiled regex instead of recompiling on every call
+                text = _emptyLinesRegex.Replace(text, string.Empty);
             }
 
             if (outputFormat == OutputFormat.Json && checkBoxAutoFormatJsonResult.Checked)
