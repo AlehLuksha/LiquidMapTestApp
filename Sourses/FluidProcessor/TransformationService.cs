@@ -88,6 +88,8 @@ namespace FluidProcessor
 
                 dynamic jObj = JsonConvert.DeserializeObject(modifiedData);
                 var context = new TemplateContext(jObj);
+				
+				context.SetValue("now", DateTime.UtcNow);
 
                 output = template.Render(context);
             }
